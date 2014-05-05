@@ -14,6 +14,8 @@ module.exports = function (config) {
     // frameworks to use
     frameworks: ['jasmine'],
 
+    preprocessors : [{'**/*.html' : ''}],
+
     // list of files / patterns to load in the browser
     files: [
       // loaded without require
@@ -29,8 +31,12 @@ module.exports = function (config) {
       'node_modules/karma-requirejs/lib/adapter.js',
 
       // loaded with require
+      {pattern: 'app/bower_components/hogan/lib/*.js', included: false},
       {pattern: 'app/bower_components/flight/**/*.js', included: false},
-      {pattern: 'app/js/**/*.js', included: false},
+      {pattern: 'app/bower_components/flight-hogan/**/*.js', included: false},
+      {pattern: 'app/bower_components/requirejs-text/text.js', included: false },
+      {pattern: 'app/**/*.js', included: false},
+			{pattern: 'app/**/*.html', included: false, served: true},
       {pattern: 'test/spec/**/*.spec.js', included: false},
 
       'test/test-main.js'

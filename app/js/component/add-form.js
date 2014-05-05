@@ -6,11 +6,14 @@ define(function (require) {
    * Module dependencies
    */
   var defineComponent = require('flight/lib/component');
+  var withHogan = require('flight-hogan/lib/with_hogan');
+  var tmpltextGroupSelectOption = require(
+    'text!template/group_select_option.html');
 
   /**
    * Module exports
    */
-  return defineComponent(addForm);
+  return defineComponent(addForm, withHogan);
 
   /**
    * Module function
@@ -21,6 +24,13 @@ define(function (require) {
     });
 
     this.after('initialize', function () {
+      var html;
+
+      if (this.data) {
+        html = this.renderTemplate(tmpltextGroupSelectOption, {poop: 'noop'});
+        this.$node.html(html);
+      }
+
       this.on('submit', this.handleSubmit);
     });
 
