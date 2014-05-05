@@ -8,11 +8,6 @@ define(function (require) {
   var defineComponent = require('flight/lib/component');
 
   /**
-   * Module exports
-   */
-  return defineComponent(symbolFinder);
-
-  /**
    * Module function
    */
   function symbolFinder() {
@@ -32,5 +27,10 @@ define(function (require) {
       });
     };
   }
+
+  /**
+   * Module exports
+   */
+  return defineComponent(symbolFinder);
 
 });

@@ -5,8 +5,8 @@ define(function (require) {
   /**
    * Module dependencies
    */
-  var addForm = require('component/add-form');
-  var symbolFinder = require('component/symbol-finder');
+  var addForm = require('component/ui-add_form');
+  var symbolFinder = require('component/data-symbol_finder');
 
   /**
    * Module exports

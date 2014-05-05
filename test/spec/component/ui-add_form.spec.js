@@ -1,6 +1,6 @@
 'use strict';
 
-describeComponent('component/add-form', function () {
+describeComponent('component/ui-add_form', function () {
   var testString = 'testString';
 
   // Initialize the component and attach it to the DOM

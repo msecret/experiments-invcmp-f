@@ -11,11 +11,6 @@ define(function (require) {
     'text!template/group_select_option.html');
 
   /**
-   * Module exports
-   */
-  return defineComponent(addForm, withHogan);
-
-  /**
    * Module function
    */
   function addForm() {
@@ -43,4 +38,10 @@ define(function (require) {
       });
     };
   }
+
+  /**
+   * Module exports
+   */
+  return defineComponent(addForm, withHogan);
+
 });

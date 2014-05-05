@@ -1,6 +1,6 @@
 'use strict';
 
-describeComponent('component/symbol-finder', function () {
+describeComponent('component/data-symbol_finder', function () {
 
   // Initialize the component and attach it to the DOM
   beforeEach(function () {
