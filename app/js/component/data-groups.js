@@ -10,27 +10,18 @@ define(function (require) {
   /**
    * Module function
    */
-  function symbolFinder() {
+  function dataGroups() {
     this.defaultAttrs({
 
     });
 
     this.after('initialize', function () {
-      this.on('ui-add_symbol', this.handleSymbolAdd);
     });
-
-    this.handleSymbolAdd = function(ev, data) {
-      var symbol = data.symbol;
-
-      this.trigger('data-symbol', {
-        symbol: {symbol: symbol}
-      });
-    };
   }
 
   /**
    * Module exports
    */
-  return defineComponent(symbolFinder);
+  return defineComponent(dataGroups);
 
 });
