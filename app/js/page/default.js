@@ -6,7 +6,7 @@ define(function (require) {
    * Module dependencies
    */
   var addForm = require('component/ui-add_form');
-  var symbolFinder = require('component/data-symbol_finder');
+  var dataInvestments = require('component/data-investments');
 
   /**
    * Module exports
@@ -18,7 +18,7 @@ define(function (require) {
    */
   function initialize() {
     addForm.attachTo('.js-addInvestment');
-    symbolFinder.attachTo('.js-addInvestment');
+    dataInvestments.attachTo(document);
   }
 
 });
