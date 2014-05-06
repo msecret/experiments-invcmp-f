@@ -21,6 +21,7 @@
   "predef": [
     "$",
     "jQuery",
+    "afterEach",
     "before",
     "beforeEach",
     "define",
@@ -31,6 +32,7 @@
     "it",
     "requirejs",
     "setupComponent",
+    "sinon",
     "spyOnEvent"
   ]
 }

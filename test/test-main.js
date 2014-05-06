@@ -10,7 +10,7 @@ requirejs.config({
 
   paths: {
     component: '../js/component',
-   'hoganjs': 'hogan/web/builds/2.0.0/hogan-2.0.0.amd',
+    hoganjs: 'hogan/web/builds/2.0.0/hogan-2.0.0.amd',
     page: '../js/page',
     text: 'requirejs-text/text',
     template: '../template'

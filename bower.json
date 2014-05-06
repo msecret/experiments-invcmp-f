@@ -7,9 +7,12 @@
     "requirejs": "~2.1.5",
     "normalize-css": "3.x.x",
     "requirejs-text": "~2.0.12",
-    "flight-hogan": "~2.0.1"
+    "flight-hogan": "~2.0.1",
+    "flight-request": "~0.0.3"
   },
   "devDependencies": {
-    "jasmine-flight": "~2.2.0"
+    "jasmine-flight": "~2.2.0",
+    "sinonjs": "~1.9.1",
+    "jasmine-sinon": "~0.3.2"
   }
 }

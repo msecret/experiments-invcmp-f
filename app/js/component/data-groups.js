@@ -6,13 +6,14 @@ define(function (require) {
    * Module dependencies
    */
   var defineComponent = require('flight/lib/component');
+  var withRequest = require('flight-request/lib/with_request');
 
   /**
    * Module function
    */
   function dataGroups() {
     this.defaultAttrs({
-      getAllUrl: '/user/{uid}/groups'
+      getAllUrl: '/groups'
     });
 
     this.after('initialize', function () {
@@ -23,12 +24,12 @@ define(function (require) {
     this.getGroups = function(opts) {
       var opts = opts || {};
       this.get({
-        url: this.getAllUrl,
+        url: this.attr.getAllUrl,
         success: function(resp) {
-          opts.success && opts.success(data);
+          opts.success && opts.success(resp);
         },
         error: function(resp) {
-          opts.error && options.error(data);
+          opts.error && opts.error(resp);
         }
       });
     };
@@ -37,6 +38,6 @@ define(function (require) {
   /**
    * Module exports
    */
-  return defineComponent(dataGroups);
+  return defineComponent(dataGroups, withRequest);
 
 });
