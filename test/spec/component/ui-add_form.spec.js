@@ -16,24 +16,88 @@ describeComponent('component/ui-add_form', function () {
     expect(this.component).toBeDefined();
   });
 
-  it('should listen for input submit events and trigger ui-add_symbol', 
-     function() {
-    var eventSpy;
+  describe('self submit', function() {
+    it('should listen for input submit events and trigger ui-add_symbol',
+       function() {
+      var eventSpy;
 
-    eventSpy = spyOnEvent(document, 'ui-add_symbol');
-    
-    this.$node.trigger('submit');
+      eventSpy = spyOnEvent(document, 'ui-add_symbol');
 
-    expect(eventSpy.mostRecentCall.data).toEqual({symbol: testString});
+      this.$node.trigger('submit');
+
+      expect(eventSpy.mostRecentCall.data).toEqual({symbol: testString});
+    });
+    it('should listen for input submit events and trigger event on document',
+       function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'ui-add_symbol');
+
+      this.$node.trigger('submit');
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
   });
-  it('should listen for input submit events and trigger even on document',
-     function() {
-    var eventSpy;
 
-    eventSpy = spyOnEvent(document, 'ui-add_symbol');
-    
-    this.$node.trigger('submit');
+  describe('data-load_groups', function() {
+    it('should not affect the groups select dom if empty object is passed',
+       function() {
+      var actual,
+          expected = '';
 
-    expect(eventSpy).toHaveBeenTriggeredOn(document);
+      this.$node.select(this.component.attr.selectorGroups).html(expected);
+
+      this.component.trigger('data-load_groups', {});
+
+      actual = this.$node.select(this.component.attr.selectorGroups).html();
+
+      expect(actual).toEqual(expected);
+    });
+    it('should not affect the groups select dom if no group list passed in',
+       function() {
+      var actual,
+          expected = '';
+
+      this.$node.select(this.component.attr.selectorGroups).html(expected);
+
+      this.component.trigger('data-load_groups', {group: null});
+
+      actual = this.$node.select(this.component.attr.selectorGroups).html();
+
+      expect(actual).toEqual(expected);
+    });
+    it('should add one <option> to the group select dom if one group is passed',
+       function() {
+      var actual,
+          testGroup = {id: 1, name: 'test'},
+          template = Hogan.compile(this.component.attr.tmpltextGroupSelectOption),
+          expected = template.render(testGroup);
+
+      this.$node.select(this.component.attr.selectorGroups).html('');
+
+      this.component.trigger('data-load_groups', {groups: [testGroup]});
+
+      actual = this.$node.select(this.component.attr.selectorGroups).html();
+
+      expect(actual).toEqual(expected);
+    });
+    it('should add multiple <option>(s) to the group select dom for multiple ' +
+       'groups', function() {
+      var actual,
+          testGroups = [{id: 1, name: 'test1'}, {id: 2, name: 'test2'}],
+          template = Hogan.compile(this.component.attr.tmpltextGroupSelectOption),
+          expected;
+
+      this.$node.select(this.component.attr.selectorGroups).html('');
+
+      expected = template.render(testGroups[0]);
+      expected += template.render(testGroups[1]);
+      
+      this.component.trigger('data-load_groups', {groups: testGroups});
+
+      actual = this.$node.select(this.component.attr.selectorGroups).html();
+
+      expect(actual).toEqual(expected);
+    });
   });
 });

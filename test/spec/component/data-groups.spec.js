@@ -47,21 +47,20 @@ describeComponent('component/data-groups', function () {
       this.component.getGroups({success: cbSpy});
       server.respond();
 
-      expect(cbSpy.calledWith(expected));
+      expect(cbSpy).toHaveBeenCalledWith(JSON.parse(expected));
     });
     it('should execute the error callback passed in if request unsuccessful',
        function() {
-      var cbSpy = sinon.spy(),
-          expected = '{"message": "500"}';
+      var cbSpy = sinon.spy();
 
       server.respondWith('GET', '/groups',
                               [500, { 'Content-Type': 'application/json' },
-                               expected]);
+                               '']);
 
       this.component.getGroups({error: cbSpy});
       server.respond();
 
-      expect(cbSpy.calledWith(expected));
+      expect(cbSpy).toHaveBeenCalled();
     });
   });
 });
