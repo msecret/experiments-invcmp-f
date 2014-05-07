@@ -28,12 +28,16 @@ define(function (require) {
     });
 
     this.handleSearchedSymbol = function(ev, data) {
-      var symbol = data.symbol;
+      if (!data || !data.symbol) {
+        return;
+      }
+      var symbol = data.symbol,
+          group = data.group || null;
 
       // ajax request for data.
 
       this.trigger('data-found_symbol', {
-        symbol: {symbol: symbol}
+        symbol: {symbol: symbol, group: group}
       });
     };
   }
