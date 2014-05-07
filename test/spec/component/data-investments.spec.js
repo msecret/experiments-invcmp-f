@@ -11,17 +11,17 @@ describeComponent('component/data-investments', function () {
     expect(this.component).toBeDefined();
   });
 
-  it('should listen for ui-searched_symbol events and fire data-found_symbol on '+
-     'document', function() {
-    var eventSpy;
-
-    eventSpy = spyOnEvent(document, 'data-found_symbol');
-    this.$node.trigger('ui-searched_symbol', {symbol: 'LSD'});
-
-    expect(eventSpy).toHaveBeenTriggeredOn(document);
-  });
-
   describe('on ui-searched_symbol', function() {
+    var server;
+
+    beforeEach(function() {
+      server = sinon.fakeServer.create();
+    });
+
+    afterEach(function() {
+      server.restore();
+    });
+
     it('should not trigger anything if data is not truthy', function() {
       var eventSpy;
 
@@ -39,39 +39,87 @@ describeComponent('component/data-investments', function () {
       expect(eventSpy).not.toHaveBeenCalled();
     });
     it('should not make an ajax request if symbol is not a string', function() {
+      this.$node.trigger('ui-searched_symbol', {symbol: ['poop']});
 
+      expect(server.requests.length).toEqual(0);
     });
-    it('should listen for ui-searched_symbol events and fire data-found_symbol', 
-       function() {
-      var eventSpy,
-          testSymbol,
-          testGroup;
+    it('should trigger data-invalid_symbol if symbol is not a string', function() {
+      var eventSpy;
 
-      testSymbol = 'TST';
-      testGroup = 'testg1';
-      eventSpy = spyOnEvent(document, 'data-found_symbol');
-      this.$node.trigger('ui-searched_symbol', {
-        group: testGroup,
-        symbol: testSymbol
-      });
+      eventSpy = spyOnEvent(document, 'data-invalid_symbol');
+      this.$node.trigger('ui-searched_symbol', {symbol: {}});
 
-      expect(eventSpy.mostRecentCall.data).toEqual({
-        symbol: {symbol: testSymbol, group:testGroup}
-      });
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('should make a POST ajax call to /symbols if symbol string', function() {
+      var testSymbol = 'TST';
+
+      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+
+      expect(server.requests[0].url).toEqual('/symbols');
+      expect(server.requests[0].method).toEqual('POST');
+    });
+    it('should trigger data-added_symbol with symbol data if the request '+
+       'succeeded', function() {
+      var testSymbol = 'TST',
+          expected = {symbol: 'TST', group: 'test'},
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-added_symbol');
+      server.respondWith('POST', '/symbols',
+                              [200, { 'Content-Type': 'application/json' },
+                               JSON.stringify(expected)]);
+
+      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      server.respond();
+
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
     });
     it('should leave group null if no group is present in data', function() {
-      var eventSpy,
-          testSymbol;
+      var testSymbol = 'TST',
+          expected = {symbol: 'TST'},
+          eventSpy;
 
-      testSymbol = 'TST';
-      eventSpy = spyOnEvent(document, 'data-found_symbol');
-      this.$node.trigger('ui-searched_symbol', {
-        symbol: testSymbol
-      });
+      eventSpy = spyOnEvent(document, 'data-added_symbol');
+      server.respondWith('POST', '/symbols',
+                              [200, { 'Content-Type': 'application/json' },
+                               JSON.stringify(expected)]);
 
-      expect(eventSpy.mostRecentCall.data).toEqual({
-        symbol: {symbol: testSymbol, group: null}
-      });
+      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      server.respond();
+
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+    });
+    it('should fire data-not_found_symbol when server returns 400 failures',
+       function() {
+      var testSymbol = 'TST',
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-not_found_symbol');
+      server.respondWith('POST', '/symbols',
+                              [400, { 'Content-Type': 'application/json' },
+                               '']);
+
+      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+
+    });
+    it('should fire data-failure_request when server returns failure but 400', 
+       function() {
+      var testSymbol = 'TST',
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-failure_request');
+      server.respondWith('POST', '/symbols',
+                              [500, { 'Content-Type': 'application/json' },
+                               '']);
+
+      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
   });
 });
