@@ -22,21 +22,21 @@ describeComponent('component/data-investments', function () {
       server.restore();
     });
 
-    it('should not trigger anything if data is not truthy', function() {
+    it('should trigger data-invalid_symbol if data is not truthy', function() {
       var eventSpy;
 
-      eventSpy = spyOnEvent(document, 'data-found_symbol');
+      eventSpy = spyOnEvent(document, 'data-invalid_symbol');
       this.$node.trigger('ui-searched_symbol', null);
 
-      expect(eventSpy).not.toHaveBeenCalled();
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
     it('shoud not trigger anything if there is no symbol in data', function() {
       var eventSpy;
 
-      eventSpy = spyOnEvent(document, 'data-found_symbol');
+      eventSpy = spyOnEvent(document, 'data-invalid_symbol');
       this.$node.trigger('ui-searched_symbol', {group: 'test'});
 
-      expect(eventSpy).not.toHaveBeenCalled();
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
     it('should not make an ajax request if symbol is not a string', function() {
       this.$node.trigger('ui-searched_symbol', {symbol: ['poop']});
