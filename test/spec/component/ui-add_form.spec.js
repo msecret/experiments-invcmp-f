@@ -16,7 +16,7 @@ describeComponent('component/ui-add_form', function () {
     expect(this.component).toBeDefined();
   });
 
-  describe('self submit', function() {
+  describe('on submit', function() {
     it('should listen for input submit events and trigger ui-add_symbol',
        function() {
       var eventSpy;
@@ -36,6 +36,19 @@ describeComponent('component/ui-add_form', function () {
       this.$node.trigger('submit');
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+  });
+
+  describe('on click .addGroup', function() {
+    it('should trigger a ui-add_group event on document', function() {
+      var eventSpy,
+          selector = this.component.attr.selectorAddGroup;
+
+      eventSpy = spyOnEvent(this.$node, 'ui-add_group');
+
+      this.$node.trigger('click', selector);
+
+      expect(eventSpy).toHaveBeenTriggeredOn(this.$node);
     });
   });
 
@@ -93,6 +106,25 @@ describeComponent('component/ui-add_form', function () {
       expected = template.render(testGroups[0]);
       expected += template.render(testGroups[1]);
       
+      this.component.trigger('data-load_groups', {groups: testGroups});
+
+      actual = this.$node.select(this.component.attr.selectorGroups).html();
+
+      expect(actual).toEqual(expected);
+    });
+    it('should not duplicate <option> elements when called more then 1 time',
+       function() {
+      var actual,
+          testGroups = [{id: 1, name: 'test1'}, {id: 2, name: 'test2'}],
+          template = Hogan.compile(this.component.attr.tmpltextGroupSelectOption),
+          expected;
+
+      this.$node.select(this.component.attr.selectorGroups).html('');
+
+      expected = template.render(testGroups[0]);
+      expected += template.render(testGroups[1]);
+      
+      this.component.trigger('data-load_groups', {groups: testGroups});
       this.component.trigger('data-load_groups', {groups: testGroups});
 
       actual = this.$node.select(this.component.attr.selectorGroups).html();

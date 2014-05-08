@@ -11,29 +11,37 @@ define(function (require) {
     'text!template/group_select_option.html');
 
   /**
+   * Module exports
+   */
+  return defineComponent(addForm, withHogan);
+
+  /**
    * Module function
    */
   function addForm() {
     this.defaultAttrs({
-      symbolInputSelector: '.js-symbol',
+      selectorSymbol: '.js-symbol',
+      selectorAddGroup: '.js-addGroup',
       selectorGroups: '.js-groups',
+      selectorActiveGroups: '.js-activeGroups',
       tmpltextGroupSelectOption: tmpltextGroupSelectOption
     });
 
     this.after('initialize', function () {
 
       this.on('submit', this.handleSymbolAdd);
-      this.on('data-load_groups', this.addGroupsToForm);
+      this.on('click ' + this.attr.selectorAddGroup, this.handleAddGroup); // :(
+      this.on('data-load_groups', this.handleLoadGroups);
     });
 
     /**
      * Will take the input from the add form and submit it.
      *
-     * {event} ui-add_symbol
+     * @event ui-add_symbol
      */
     this.handleSymbolAdd = function(ev) {
       ev.preventDefault();
-      var symbol = this.select('symbolInputSelector').val();
+      var symbol = this.select('selectorSymbol').val();
 
       this.trigger('ui-add_symbol', {
         symbol: symbol
@@ -41,10 +49,37 @@ define(function (require) {
     };
 
     /**
+     * Handler for when all groups are loaded.
+     *
+     * Will clear groups and then add the ones passed in data.
+     */
+    this.handleLoadGroups = function(ev, data) {
+      this.clearGroups();
+      this.addGroups(data);
+    };
+
+    /**
+     * Handler for when add group button is clicked
+     */
+    this.handleAddGroup = function(ev) {
+      ev.preventDefault();
+      this.trigger('ui-add_group');
+    };
+
+    /**
+     * Remove all active group options from the node
+     */
+    this.clearGroups = function() {
+      this.$node.select('selectorActiveGroups').remove();
+    };
+
+    /**
      * Takes a data attribute of multiple groups and adds each individually to
      * the group select.
+     *
+     * When using, should call clearGroups first to ensure there are no dupes.
      */
-    this.addGroupsToForm = function(ev, data) {
+    this.addGroups = function(data) {
       var groupsHtml = '',
           groupHtml = '',
           dataGroups = data.groups,
@@ -58,14 +93,8 @@ define(function (require) {
           groupsHtml += groupHtml;
         }
         
-        this.$node.select(this.attr.selectorGroups).html(groupsHtml);
+        this.$node.select('selectorGroups').append(groupsHtml);
       }
     };
   }
-
-  /**
-   * Module exports
-   */
-  return defineComponent(addForm, withHogan);
-
 });
