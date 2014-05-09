@@ -6,6 +6,7 @@ define(function (require) {
    * Module dependencies
    */
   var addForm = require('component/ui-add_form');
+  var addGroup = require('component/ui-add_group');
   var dataInvestments = require('component/data-investments');
 
   /**
@@ -18,6 +19,7 @@ define(function (require) {
    */
   function initialize() {
     addForm.attachTo('.js-addInvestment');
+    addGroup.attachTo('js-addGroup');
     dataInvestments.attachTo(document);
   }
 
