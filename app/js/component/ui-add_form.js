@@ -33,6 +33,7 @@ define(function (require) {
       this.on(document, 'data-load_groups', this.handleLoadGroups);
       this.on(document, 'data-added_group', this.handleAddedGroup);
       this.on(document, 'data-deactivate_group_add', this.handleDeactivateGroup);
+      this.on(document, 'data-added_symbol', this.handleAddedSymbol);
       this.on(this.attr.selectorGroups, 'change', this.handleSelectChange);
     });
 
@@ -50,6 +51,16 @@ define(function (require) {
         group: group || null,
         symbol: symbol
       });
+    };
+
+    /**
+     * Handles when a symbol was successfully added
+     *
+     * @param {Object} ev The jQuery event object
+     * @param {Object} data The data payload.
+     */
+    this.handleAddedSymbol = function(ev, data) {
+      this.clearInput();
     };
 
     /**
@@ -84,6 +95,13 @@ define(function (require) {
       }
     };
 
+    /**
+     * Handles changes on the select element and delegates to different
+     * events
+     *
+     * @param {Object} ev The jQuery event object
+     * @param {Object} data The data payload.
+     */
     this.handleSelectChange = function(ev, data) {
       ev.preventDefault();
       var $selected = this.select('selectorGroups')
@@ -97,6 +115,13 @@ define(function (require) {
 
     this.handleDeactivateGroup = function() {
       this.selectDefault(); 
+    };
+
+    /**
+     * Clear just the text input.
+     */
+    this.clearInput = function() {
+      this.select('selectorSymbol').val('');
     };
 
     /**

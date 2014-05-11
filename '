@@ -142,14 +142,7 @@ describeComponent('component/ui-add_form', function () {
 
   describe('on data-added_symbol', function() {
     it('should clear the text input form value', function() {
-      var actual;
 
-      this.component.select('selectorSymbol').val('something');
-      $(document).trigger('data-added_symbol');
-
-      actual = this.component.select('selectorSymbol').val();
-
-      expect(actual).toEqual('');
     });
   });
 

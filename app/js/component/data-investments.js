@@ -25,7 +25,7 @@ define(function (require) {
     });
 
     this.after('initialize', function () {
-      this.on('ui-searched_symbol', this.handleSearchedSymbol);
+      this.on('ui-add_symbol', this.handleSearchedSymbol);
     });
 
     /**

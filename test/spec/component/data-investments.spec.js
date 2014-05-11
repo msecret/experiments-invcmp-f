@@ -11,7 +11,7 @@ describeComponent('component/data-investments', function () {
     expect(this.component).toBeDefined();
   });
 
-  describe('on ui-searched_symbol', function() {
+  describe('on ui-add_symbol', function() {
     var server;
 
     beforeEach(function() {
@@ -26,7 +26,7 @@ describeComponent('component/data-investments', function () {
       var eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-invalid_symbol');
-      this.$node.trigger('ui-searched_symbol', null);
+      this.$node.trigger('ui-add_symbol', null);
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
@@ -34,12 +34,12 @@ describeComponent('component/data-investments', function () {
       var eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-invalid_symbol');
-      this.$node.trigger('ui-searched_symbol', {group: 'test'});
+      this.$node.trigger('ui-add_symbol', {group: 'test'});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
     it('should not make an ajax request if symbol is not a string', function() {
-      this.$node.trigger('ui-searched_symbol', {symbol: ['poop']});
+      this.$node.trigger('ui-add_symbol', {symbol: ['poop']});
 
       expect(server.requests.length).toEqual(0);
     });
@@ -47,14 +47,14 @@ describeComponent('component/data-investments', function () {
       var eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-invalid_symbol');
-      this.$node.trigger('ui-searched_symbol', {symbol: {}});
+      this.$node.trigger('ui-add_symbol', {symbol: {}});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
     it('should make a POST ajax call to /symbols if symbol string', function() {
       var testSymbol = 'TST';
 
-      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
 
       expect(server.requests[0].url).toEqual('/symbols');
       expect(server.requests[0].method).toEqual('POST');
@@ -70,7 +70,7 @@ describeComponent('component/data-investments', function () {
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
-      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
       server.respond();
 
       expect(eventSpy.mostRecentCall.data).toEqual(expected);
@@ -85,7 +85,7 @@ describeComponent('component/data-investments', function () {
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
-      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
       server.respond();
 
       expect(eventSpy.mostRecentCall.data).toEqual(expected);
@@ -100,7 +100,7 @@ describeComponent('component/data-investments', function () {
                               [400, { 'Content-Type': 'application/json' },
                                '']);
 
-      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
@@ -116,11 +116,10 @@ describeComponent('component/data-investments', function () {
                               [500, { 'Content-Type': 'application/json' },
                                '']);
 
-      this.$node.trigger('ui-searched_symbol', {symbol: testSymbol});
+      this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
   });
-
 });
