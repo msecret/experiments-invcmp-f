@@ -20,6 +20,7 @@ define(function (require) {
    */
   function uiAddGroup() {
     this.defaultAttrs({
+      selectorLoadingIcon: 'js-loadingIcon',
       selectorCancelButton: '.js-cancelButton',
       selectorGroupInput: '.js-groupInput'
     });
@@ -28,9 +29,16 @@ define(function (require) {
 
       this.on('ui-activate_group_add', this.handleActivateGroupForm);
       this.on('ui-wanted_new_group', this.handleWantedNewGroup);
+      this.on('data-loading_group', this.loadingStart);
+      this.on('submit', this.handleSubmit);
       this.on('click '+ this.attr.selectorCancelButton, this.handleCancel);
     });
 
+    /**
+     * Handles when there's a request to create a new group
+     *
+     * @param {Object} ev The jQuery event object.
+     */
     this.handleWantedNewGroup = function(ev, data) {
       ev.preventDefault();
 
@@ -39,10 +47,32 @@ define(function (require) {
       this.trigger('ui-activate_group_add');
     };
 
-    this.handleActivateGroupForm = function(ev, data) {
-      this.$node.show();
+    /**
+     * Handles the activation of the form
+     */
+    this.handleActivateGroupForm = function() {
+      this.show();
     };
 
+    /**
+     * Handles form submission
+     *
+     * @param {Object} ev The jQuery event object
+     */
+    this.handleSubmit = function(ev) {
+      ev.preventDefault();
+      var group = this.select('selectorGroupInput').val();
+
+      this.trigger('ui-add_group', {
+        group: group
+      });
+    };
+
+    /**
+     * Handles events when the form is cancelled, ie not input.
+     *
+     * @param {Object} ev The jQuery event object
+     */
     this.handleCancel = function(ev, data) {
       ev.preventDefault();
 
@@ -51,8 +81,44 @@ define(function (require) {
       this.trigger('ui-deactivate_group_add');
     };
 
+    /**
+     * Shows the form ui
+     */
+    this.show = function() {
+      this.$node.show();
+    };
+
+    /**
+     * Hides the form ui.
+     */
+    this.hide = function() {
+      this.$node.hide();
+    };
+
+    /**
+     * Clears the any input fields on the form to blank values.
+     */
     this.clearForm = function() {
       this.$node.select('selectorGroupInput').val('');
     };
+
+    /**
+     * Initiate any ui elements that show loading
+     *
+     * Currently shows a loading icon
+     */
+    this.loadingStart = function() {
+      this.$node.select('selectorLoadingIcon').show();
+    };
+
+    /**
+     * Stop any ui that shows loading
+     *
+     * Currently hides a loading icon
+     */
+    this.loadingStop = function() {
+      this.$node.select('selectorLoadingIcon').hide();
+    };
   }
+
 });

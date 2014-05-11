@@ -8,6 +8,7 @@ describeComponent('component/ui-add_group', function () {
                     '<input type="text" class="js-groupInput" />'+
                     '<input class="js-submit" type="submit" />'+
                     '<button class="js-cancelButton">cancel</button>'+
+                    '<i class="js-loadingIcon" class="hidden"></i>'+
                   '</form>';
     setupComponent(fixture);
   });
@@ -49,7 +50,39 @@ describeComponent('component/ui-add_group', function () {
   });
 
   describe('on submit', function() {
+    it('should trigger a ui-add_group event on itself', function() {
+      var eventSpy;
 
+      eventSpy = spyOnEvent(this.$node, 'ui-add_group');
+      this.$node.select('selectorGroupInput').val('dummyGroup');
+
+      this.$node.trigger('submit');
+
+      expect(eventSpy).toHaveBeenTriggeredOn(this.$node);
+    });
+    it('should pass the text input value in the event', function() {
+      var eventSpy,
+          expected = 'testGroup';
+
+      eventSpy = spyOnEvent(this.$node, 'ui-add_group');
+      this.component.select('selectorGroupInput').val(expected);
+
+      this.$node.trigger('submit');
+
+      expect(eventSpy.mostRecentCall.data).toEqual({group: expected});
+    });
+  });
+
+  describe('on data-loading_group', function() {
+    it('should unhide a spinner on the form', function() {
+
+      this.$node.select('selectorLoadingIcon').hide(); // Unsure hidden in test.
+
+      this.$node.trigger('data-loading_group');
+
+      expect(this.$node.select('selectorLoadingIcon').is(':hidden'))
+        .toBeFalsy();
+    });
   });
   
   describe('on click cancel', function() {
