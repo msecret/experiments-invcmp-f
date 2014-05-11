@@ -22,6 +22,7 @@ define(function (require) {
       this.groups = [];
       this.on('ui-add_group', this.handleAddGroup);
       this.on('ui-wanted_new_group', this.handleWantedGroup);
+      this.on('ui-deactivate_group_add', this.handleDeactivateGroupAdd);
     });
 
     /**
@@ -42,6 +43,13 @@ define(function (require) {
      */
     this.handleWantedGroup = function() {
       this.trigger('data-wanted_new_group');
+    };
+
+    /**
+     * Essentially just used for passing events between ui components.
+     */
+    this.handleDeactivateGroupAdd = function() {
+      this.trigger('data-deactivate_group_add');
     };
 
     /**

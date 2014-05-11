@@ -135,4 +135,16 @@ describeComponent('component/data-groups', function () {
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
   });
+
+  describe('on ui-deactivate_group_add', function() {
+    it('should trigger data-deactivate_group_add on document', function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-deactivate_group_add');
+
+      this.component.trigger('ui-deactivate_group_add');
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+  });
 });

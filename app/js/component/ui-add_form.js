@@ -32,6 +32,7 @@ define(function (require) {
       this.on('submit', this.handleSymbolAdd);
       this.on(document, 'data-load_groups', this.handleLoadGroups);
       this.on(document, 'data-added_group', this.handleAddedGroup);
+      this.on(document, 'data-deactivate_group_add', this.handleDeactivateGroup);
       this.on(this.attr.selectorGroups, 'change', this.handleSelectChange);
     });
 
@@ -92,6 +93,10 @@ define(function (require) {
       }
     };
 
+    this.handleDeactivateGroup = function() {
+      this.selectDefault(); 
+    };
+
     /**
      * Remove all active group options from the node
      */
@@ -146,6 +151,14 @@ define(function (require) {
     this.selectGroup = function(group) {
       this.select('selectorGroups')
           .find('option[value="'+ group +'"]').prop('selected', true);
+    };
+
+    /**
+     * Selects the first null option
+     */
+    this.selectDefault = function() {
+      this.select('selectorGroups')
+          .find('.js-addGroupNullOption').prop('selected', true);
     };
   }
 });

@@ -9,8 +9,9 @@ describeComponent('component/ui-add_form', function () {
                     '<input type="text" class="js-symbol"'+
                       'value='+ testString +' />'+
                       '<select class="js-groups">'+
-                        '<option value="">- </option>'+
-                        '<option class="js-addGroupButton" value="">add new  +'+
+                        '<option class="js-addGroupNullOption" value="">- '+
+                          '</option>'+
+                        '<option class="js-addGroupButton" value="add">add new +'+
                           '</option>'+
                       '</select>'+
                       '<input class="js-submit" type="submit" name'+
@@ -157,6 +158,20 @@ describeComponent('component/ui-add_form', function () {
       actual = this.component.select('selectorGroups').find('option').length;
 
       expect(actual).toEqual(expected);
+    });
+  });
+  
+  describe('on data-deactivate_group_add', function() {
+    it('should select the placeholder option', function() {
+      var actual;
+
+      this.component.select('selectorGroups').val('add');
+
+      $(document).trigger('data-deactivate_group_add');
+
+      actual = this.component.select('selectorGroups').val();
+
+      expect(actual).toEqual('');
     });
   });
 });
