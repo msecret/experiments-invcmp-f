@@ -22,6 +22,64 @@ describeComponent('component/data-groups', function () {
     });
   });
 
+  describe('on ui-add_group', function() {
+    beforeEach(function() {
+      this.component.groups = []; // Clear the components memory of groups.
+    });
+    it('should trigger data-invalid_add_group with reason: empty if group in '+
+       'data is falsy', function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-invalid_add_group');
+
+      this.component.trigger('ui-add_group', {group: ''});
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+      expect(eventSpy.mostRecentCall.data).toEqual({reason: 'empty'});
+    });
+    it('should trigger data-invalid_add_group with reason: duplicate if the '+
+       'group is a duplicate', function() {
+      var eventSpy,
+          testGroup;
+
+      eventSpy = spyOnEvent(document, 'data-invalid_add_group');
+      testGroup = 'testGroup1';
+      this.component.groups.push(testGroup);
+
+      this.component.trigger('ui-add_group', {group: testGroup});
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+      expect(eventSpy.mostRecentCall.data).toEqual({reason: 'duplicate'});
+    });
+    it('should trigger data-loading_group', function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-loading_group');
+
+      this.component.trigger('ui-add_group', {group: 'newGroup'});
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('should trigger data-added_group if adding was successful', function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-added_group');
+
+      this.component.trigger('ui-add_group', {group: 'newGroupA'});
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('should trigger data-loaded_group on success', function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-loaded_group');
+
+      this.component.trigger('ui-add_group', {group: 'newGroup'});
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+  });
+
   describe('getGroups()', function() {
     it('should default to no callbacks if options is not passed in', function() {
       server.respondWith('GET', '/groups',

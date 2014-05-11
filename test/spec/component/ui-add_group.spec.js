@@ -6,6 +6,10 @@ describeComponent('component/ui-add_group', function () {
   beforeEach(function () {
     var fixture = '<form style="display: none;">'+
                     '<input type="text" class="js-groupInput" />'+
+                    '<p class="js-warningEmptyGroup warning hidden">The group '+
+                      'field is empty</p>'+
+                    '<p class="js-warningDuplicateGroup warning hidden">A group '+
+                      'with that name already exists</p>'+
                     '<input class="js-submit" type="submit" />'+
                     '<button class="js-cancelButton">cancel</button>'+
                     '<i class="js-loadingIcon" class="hidden"></i>'+
@@ -70,6 +74,71 @@ describeComponent('component/ui-add_group', function () {
       this.$node.trigger('submit');
 
       expect(eventSpy.mostRecentCall.data).toEqual({group: expected});
+    });
+  });
+
+  describe('on data-added_group', function() {
+    it('should hide the loading icon', function() {
+      this.$node.select('selectorLoadingIcon').show(); // Ensure already showing.
+
+      this.$node.trigger('data-added_group');
+
+      expect(this.$node.select('selectorLoadingIcon').is(':hidden'))
+        .toBeTruthy();
+    });
+    it('should hide itself', function() {
+      this.$node.trigger('data-added_group');
+
+      expect(this.$node.is(':hidden')).toBeTruthy();
+    });
+  });
+
+  describe('on data-invalid_group', function() {
+    it('should clear the text input', function() {
+      var $groupInput = this.$node.select('selectorGroupInput');
+
+      $groupInput.val('something');
+      
+      this.$node.trigger('data-invalid_group');
+
+      expect($groupInput.val()).toEqual('');
+    });
+    it('should put a warning class on the text input', function() {
+      var $groupInput = this.$node.select('selectorGroupInput');
+
+      $groupInput.toggleClass('warning', false); // Ensure not present.
+      
+      this.$node.trigger('data-invalid_group');
+
+      expect($groupInput.hasClass('warning')).toBeTruthy();
+    });
+    it('should show the empty warning message if the reason: empty', function() {
+      var $groupWarning = this.$node.select('selectorWarningEmptyGroup');
+
+      $groupWarning.toggleClass('hidden', true);
+
+      this.$node.trigger('data-invalid_group', {reason: 'empty'});
+
+      expect($groupWarning.is(':hidden')).toBeFalsy();
+    });
+    it('should show the duplicate warning message if the reason: duplicate',
+       function() {
+      var $groupWarning = this.$node.select('selectorWarningEmptyGroup');
+
+      $groupWarning.toggleClass('hidden', true);
+
+      this.$node.trigger('data-invalid_group', {reason: 'duplicate'});
+
+      expect($groupWarning.is(':hidden')).toBeFalsy();
+
+    });
+    it('should hide the loading icon', function() {
+      this.$node.select('selectorLoadingIcon').show(); // Ensure already showing.
+
+      this.$node.trigger('data-added_group');
+
+      expect(this.$node.select('selectorLoadingIcon').is(':hidden'))
+        .toBeTruthy();
     });
   });
 

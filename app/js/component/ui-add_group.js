@@ -22,7 +22,9 @@ define(function (require) {
     this.defaultAttrs({
       selectorLoadingIcon: 'js-loadingIcon',
       selectorCancelButton: '.js-cancelButton',
-      selectorGroupInput: '.js-groupInput'
+      selectorGroupInput: '.js-groupInput',
+      selectorWarningEmptyGroup: '.js-warningEmptyGroup',
+      selectorWarningDuplicateGroup: '.js-warningDuplicateGroup'
     });
 
     this.after('initialize', function () {
@@ -30,6 +32,8 @@ define(function (require) {
       this.on('ui-activate_group_add', this.handleActivateGroupForm);
       this.on('ui-wanted_new_group', this.handleWantedNewGroup);
       this.on('data-loading_group', this.loadingStart);
+      this.on('data-added_group', this.handleAddedGroup);
+      this.on('data-invalid_group', this.handleInvalidGroup);
       this.on('submit', this.handleSubmit);
       this.on('click '+ this.attr.selectorCancelButton, this.handleCancel);
     });
@@ -81,6 +85,22 @@ define(function (require) {
       this.trigger('ui-deactivate_group_add');
     };
 
+    this.handleAddedGroup = function() {
+      this.clearForm();
+      this.$node.select('selectorSuccessIcon').show();
+      this.hide();
+    };
+
+    this.handleInvalidGroup = function(ev, data) {
+      this.clearForm();
+      this.$node.select('selectorGroupInput').toggleClass('warning', true);
+      if (data && data.reason === 'empty') {
+        this.$node.select('selectorwarningEmptyGroup').show();
+      } else if (data && data.reason === 'duplicate') {
+        this.$node.select('selectorWarningDuplicateGroup').show();
+      }
+    };
+
     /**
      * Shows the form ui
      */
@@ -100,6 +120,8 @@ define(function (require) {
      */
     this.clearForm = function() {
       this.$node.select('selectorGroupInput').val('');
+      this.$node.select('selectorLoadingIcon').hide();
+      this.$node.select('selectorGroupInput').toggleClass('warning', false);
     };
 
     /**

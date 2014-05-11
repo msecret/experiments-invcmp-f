@@ -19,7 +19,38 @@ define(function (require) {
     this.after('initialize', function () {
       // TODO flow for getting groups
       // call getGroups with callbacks to trigger events
+      this.groups = [];
+      this.on('ui-add_group', this.handleAddGroup);
     });
+
+    this.handleAddGroup = function(ev, data) {
+      var group = data.group;
+      this.trigger('data-loading_group');
+
+      this.addGroup(group);
+    };
+
+    /**
+     * Adds a group to the list of groups. Checks that the group is not empty
+     * and the  group is not a duplicate.
+     *
+     * @param {String} group The group to add.
+     */
+    this.addGroup = function(group) {
+      if (!group) {
+        this.trigger('data-invalid_add_group', {reason: 'empty'});
+        return;
+      }
+      
+      if ($.inArray(group, this.groups) !== -1) {
+        this.trigger('data-invalid_add_group', {reason: 'duplicate'});
+        return;
+      }
+
+      this.groups.push(group);
+      this.trigger('data-added_group');
+      this.trigger('data-loaded_group');
+    };
 
     this.getGroups = function(opts) {
       var opts = opts || {};
