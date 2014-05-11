@@ -21,13 +21,27 @@ define(function (require) {
       // call getGroups with callbacks to trigger events
       this.groups = [];
       this.on('ui-add_group', this.handleAddGroup);
+      this.on('ui-wanted_new_group', this.handleWantedGroup);
     });
 
+    /**
+     * Handler for when a new group has been added in ui.
+     *
+     * @param {Object} ev jQuery event object.
+     * @param {Object} data Data passed from ui.
+     */
     this.handleAddGroup = function(ev, data) {
       var group = data.group;
       this.trigger('data-loading_group');
 
       this.addGroup(group);
+    };
+
+    /**
+     * Essentially just used for passing events between ui components.
+     */
+    this.handleWantedGroup = function() {
+      this.trigger('data-wanted_new_group');
     };
 
     /**
@@ -52,6 +66,13 @@ define(function (require) {
       this.trigger('data-loaded_group');
     };
 
+    /**
+     * Get all groups from the backend
+     *
+     * @param {Object} options Hash containing request options.
+     *   success {Function} optional
+     *   error {Function} optional
+     */
     this.getGroups = function(opts) {
       var opts = opts || {};
       this.get({

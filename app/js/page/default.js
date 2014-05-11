@@ -20,7 +20,7 @@ define(function (require) {
    */
   function initialize() {
     addForm.attachTo('.js-addInvestment');
-    addGroup.attachTo('js-addGroup');
+    addGroup.attachTo('.js-addGroup');
     dataInvestments.attachTo(document);
     dataGroups.attachTo(document);
   }

@@ -28,14 +28,13 @@ define(function (require) {
     });
 
     this.after('initialize', function () {
-
       this.on('ui-activate_group_add', this.handleActivateGroupForm);
-      this.on('ui-wanted_new_group', this.handleWantedNewGroup);
-      this.on('data-loading_group', this.loadingStart);
-      this.on('data-added_group', this.handleAddedGroup);
-      this.on('data-invalid_group', this.handleInvalidGroup);
+      this.on(document, 'data-wanted_new_group', this.handleWantedNewGroup);
+      this.on(document, 'data-loading_group', this.loadingStart);
+      this.on(document, 'data-added_group', this.handleAddedGroup);
+      this.on(document, 'data-invalid_add_group', this.handleInvalidGroup);
       this.on('submit', this.handleSubmit);
-      this.on('click '+ this.attr.selectorCancelButton, this.handleCancel);
+      this.on(this.attr.selectorCancelButton, 'click', this.handleCancel);
     });
 
     /**
@@ -87,17 +86,17 @@ define(function (require) {
 
     this.handleAddedGroup = function() {
       this.clearForm();
-      this.$node.select('selectorSuccessIcon').show();
+      this.select('selectorSuccessIcon').show();
       this.hide();
     };
 
     this.handleInvalidGroup = function(ev, data) {
       this.clearForm();
-      this.$node.select('selectorGroupInput').toggleClass('warning', true);
+      this.select('selectorGroupInput').toggleClass('warning', true);
       if (data && data.reason === 'empty') {
-        this.$node.select('selectorwarningEmptyGroup').show();
+        this.select('selectorWarningEmptyGroup').show();
       } else if (data && data.reason === 'duplicate') {
-        this.$node.select('selectorWarningDuplicateGroup').show();
+        this.select('selectorWarningDuplicateGroup').show();
       }
     };
 
@@ -119,9 +118,10 @@ define(function (require) {
      * Clears the any input fields on the form to blank values.
      */
     this.clearForm = function() {
-      this.$node.select('selectorGroupInput').val('');
-      this.$node.select('selectorLoadingIcon').hide();
-      this.$node.select('selectorGroupInput').toggleClass('warning', false);
+      this.select('selectorGroupInput').val('');
+      this.select('selectorLoadingIcon').hide();
+      this.select('selectorGroupInput').toggleClass('warning', false);
+      this.$node.find('.warning').hide();
     };
 
     /**
@@ -130,7 +130,7 @@ define(function (require) {
      * Currently shows a loading icon
      */
     this.loadingStart = function() {
-      this.$node.select('selectorLoadingIcon').show();
+      this.select('selectorLoadingIcon').show();
     };
 
     /**
@@ -139,7 +139,7 @@ define(function (require) {
      * Currently hides a loading icon
      */
     this.loadingStop = function() {
-      this.$node.select('selectorLoadingIcon').hide();
+      this.select('selectorLoadingIcon').hide();
     };
   }
 

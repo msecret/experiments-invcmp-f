@@ -8,24 +8,29 @@
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href="/css/main.css">
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
   </head>
   <body>
 
-    <form class="js-addInvestment">
+    <form class="js-addInvestment" name="addInvestment">
       <input type="text" class="js-symbol" />
       <select class="js-groups">
         <option value="">- </option>
-        <option class="js-addGroup" value="">add new  +</option>
+        <option class="js-addGroupButton" value="">add new  +</option>
       </select>
-      <input class="js-submit" type="submit" />
+      <input class="js-submit" type="submit" name="addInvestment" />
     </form>
-    <form class="js-addGroup hidden" style="display: none;">
+    <form class="js-addGroup hidden" style="display: none;" name="addGroup">
       <input type="text" class="js-groupInput" />
       <p class="js-warningEmptyGroup warning hidden">The group field is
       empty</p>
       <p class="js-warningDuplicateGroup warning hidden">A group with that name
       already exists</p>
-      <input class="js-submit" type="submit" />
+      <input class="js-submit" type="submit" name="addGroup" />
       <button class="js-cancelButton">cancel</button>
       <i class="js-loadingIcon" class="hidden"></i>
     </form>

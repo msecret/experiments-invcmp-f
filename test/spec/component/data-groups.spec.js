@@ -123,4 +123,16 @@ describeComponent('component/data-groups', function () {
       expect(cbSpy).toHaveBeenCalled();
     });
   });
+
+  describe('on ui-wanted_new_group', function() {
+    it('should trigger a data-wanted_new_group event on document', function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-wanted_new_group');
+
+      this.component.trigger('ui-wanted_new_group');
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+  });
 });

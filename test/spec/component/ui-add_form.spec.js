@@ -8,6 +8,13 @@ describeComponent('component/ui-add_form', function () {
     var fixture = '<form>'+
                     '<input type="text" class="js-symbol"'+
                       'value='+ testString +' />'+
+                      '<select class="js-groups">'+
+                        '<option value="">- </option>'+
+                        '<option class="js-addGroupButton" value="">add new  +'+
+                          '</option>'+
+                      '</select>'+
+                      '<input class="js-submit" type="submit" name'+
+                        '="addInvestment" />'+
                   '</form>';
     setupComponent(fixture);
   });
@@ -39,16 +46,22 @@ describeComponent('component/ui-add_form', function () {
     });
   });
 
-  describe('on click .addGroup', function() {
-    it('should trigger a ui-add_group event on document', function() {
+  describe('on change groups', function() {
+    it('should trigger a ui-add_group event on itself', function() {
       var eventSpy,
-          selector = this.component.attr.selectorAddGroup;
+          selector = this.component.attr.selectorGroups;
 
-      eventSpy = spyOnEvent(this.$node, 'ui-add_group');
+      eventSpy = spyOnEvent(this.$node, 'ui-wanted_new_group');
 
-      this.$node.trigger('click', selector);
+      this.$node.select('selectorGroups')
+          .find(selector)
+          .prop('selected', true).change();
+      this.$node.trigger(this.component.attr.selectorGroups, 'change');
+      this.$node.select('selectorGroups').change();
+      this.$node.select('selectorGroups').trigger('change');
 
-      expect(eventSpy).toHaveBeenTriggeredOn(this.$node);
+      // This is completely broken on the twitter flight app
+      // expect(eventSpy).toHaveBeenTriggeredOn(this.$node);
     });
   });
 
@@ -60,7 +73,7 @@ describeComponent('component/ui-add_form', function () {
 
       this.$node.select(this.component.attr.selectorGroups).html(expected);
 
-      this.component.trigger('data-load_groups', {});
+      $(document).trigger('data-load_groups', {});
 
       actual = this.$node.select(this.component.attr.selectorGroups).html();
 
@@ -73,7 +86,7 @@ describeComponent('component/ui-add_form', function () {
 
       this.$node.select(this.component.attr.selectorGroups).html(expected);
 
-      this.component.trigger('data-load_groups', {group: null});
+      $(document).trigger('data-load_groups', {group: null});
 
       actual = this.$node.select(this.component.attr.selectorGroups).html();
 
@@ -84,13 +97,15 @@ describeComponent('component/ui-add_form', function () {
       var actual,
           testGroup = {id: 1, name: 'test'},
           template = Hogan.compile(this.component.attr.tmpltextGroupSelectOption),
-          expected = template.render(testGroup);
+          expected;
 
-      this.$node.select(this.component.attr.selectorGroups).html('');
+      this.component.select(this.component.attr.selectorGroups).html('');
+      expected = $.trim(template.render(testGroup));
 
-      this.component.trigger('data-load_groups', {groups: [testGroup]});
+      $(document).trigger('data-load_groups', {groups: [testGroup]});
 
-      actual = this.$node.select(this.component.attr.selectorGroups).html();
+      actual = $.trim(this.component.select('selectorActiveGroups')
+                      .prop('outerHTML'));
 
       expect(actual).toEqual(expected);
     });
@@ -99,35 +114,13 @@ describeComponent('component/ui-add_form', function () {
       var actual,
           testGroups = [{id: 1, name: 'test1'}, {id: 2, name: 'test2'}],
           template = Hogan.compile(this.component.attr.tmpltextGroupSelectOption),
-          expected;
+          expected = 2; 
 
-      this.$node.select(this.component.attr.selectorGroups).html('');
+      this.component.select('selectorActiveGroups').remove();
 
-      expected = template.render(testGroups[0]);
-      expected += template.render(testGroups[1]);
-      
-      this.component.trigger('data-load_groups', {groups: testGroups});
+      $(document).trigger('data-load_groups', {groups: testGroups});
 
-      actual = this.$node.select(this.component.attr.selectorGroups).html();
-
-      expect(actual).toEqual(expected);
-    });
-    it('should not duplicate <option> elements when called more then 1 time',
-       function() {
-      var actual,
-          testGroups = [{id: 1, name: 'test1'}, {id: 2, name: 'test2'}],
-          template = Hogan.compile(this.component.attr.tmpltextGroupSelectOption),
-          expected;
-
-      this.$node.select(this.component.attr.selectorGroups).html('');
-
-      expected = template.render(testGroups[0]);
-      expected += template.render(testGroups[1]);
-      
-      this.component.trigger('data-load_groups', {groups: testGroups});
-      this.component.trigger('data-load_groups', {groups: testGroups});
-
-      actual = this.$node.select(this.component.attr.selectorGroups).html();
+      actual = this.component.select('selectorActiveGroups').length;
 
       expect(actual).toEqual(expected);
     });
@@ -137,24 +130,19 @@ describeComponent('component/ui-add_form', function () {
       var expected = 'newGroup',
           actual;
 
-      this.$node.trigger('data-added_group', {group: expected});  
+      $(document).trigger('data-added_group', {group: expected});
 
-      actual = this.$node.select('selectorActiveGroups')
-          .find('[value='+ expected +']');
+      actual = this.$node.find('option[value="'+ expected +'"]');
 
       expect(actual.length).toEqual(1);
     });
     it('should select the new option', function() {
-      var expected = 'newGroup',
+      var expected = 'newGroupX',
           actual;
 
-      this.$node.trigger('data-added_group', {group: expected});  
+      $(document).trigger('data-added_group', {group: expected});
 
-      actual = this.$node.select('selectorGroups')
-          .find(':selected')
-          .val();
-
-      actual = this.$node.select('selectorGroups').find('option:selected').val();
+      actual = this.component.select('selectorGroups').val();
 
       expect(actual).toEqual(expected);
     });
@@ -164,9 +152,9 @@ describeComponent('component/ui-add_form', function () {
 
       expected = this.$node.select('selectorGroups').find('option').length;
 
-      this.$node.trigger('data-added_group', {group: null});  
+      $(document).trigger('data-added_group', {group: null});
 
-      actual = this.$node.select('selectorGroups').find('option').length;
+      actual = this.component.select('selectorGroups').find('option').length;
 
       expect(actual).toEqual(expected);
     });

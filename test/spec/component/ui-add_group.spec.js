@@ -21,12 +21,12 @@ describeComponent('component/ui-add_group', function () {
     expect(this.component).toBeDefined();
   });
 
-  describe('on ui-wanted_new_group', function() {
+  describe('on data-wanted_new_group', function() {
     it('should clear itself of any previous input', function() {
       var actual;
       
-      this.$node.select('selectorGroupInput').val('poop');
-      this.$node.trigger('ui-wanted_new_group');
+      this.component.select('selectorGroupInput').val('poop');
+      $(document).trigger('data-wanted_new_group');
 
       actual = this.$node.select('selectorGroupInput').val();
 
@@ -35,9 +35,9 @@ describeComponent('component/ui-add_group', function () {
     it('should trigger ui-activate_group_add to activate itself', function() {
       var eventSpy;
 
-      eventSpy = spyOnEvent(this.$node, 'ui-wanted_new_group');
+      eventSpy = spyOnEvent(this.$node, 'ui-activate_group_add');
 
-      this.$node.trigger('ui-wanted_new_group');
+      $(document).trigger('data-wanted_new_group');
 
       expect(eventSpy).toHaveBeenTriggeredOn(this.$node);
     });
@@ -95,42 +95,43 @@ describeComponent('component/ui-add_group', function () {
 
   describe('on data-invalid_group', function() {
     it('should clear the text input', function() {
-      var $groupInput = this.$node.select('selectorGroupInput');
+      var $groupInput = this.component.select('selectorGroupInput');
 
       $groupInput.val('something');
       
-      this.$node.trigger('data-invalid_group');
+      $(document).trigger('data-invalid_add_group', {});
 
       expect($groupInput.val()).toEqual('');
     });
     it('should put a warning class on the text input', function() {
-      var $groupInput = this.$node.select('selectorGroupInput');
+      var $groupInput = this.component.select('selectorGroupInput');
 
       $groupInput.toggleClass('warning', false); // Ensure not present.
       
-      this.$node.trigger('data-invalid_group');
+      $(document).trigger('data-invalid_add_group', {reason: 'duplicate'});
 
       expect($groupInput.hasClass('warning')).toBeTruthy();
     });
     it('should show the empty warning message if the reason: empty', function() {
       var $groupWarning = this.$node.select('selectorWarningEmptyGroup');
 
+      this.$node.show();
       $groupWarning.toggleClass('hidden', true);
 
-      this.$node.trigger('data-invalid_group', {reason: 'empty'});
+      $(document).trigger('data-invalid_add_group', {reason: 'duplicate'});
 
       expect($groupWarning.is(':hidden')).toBeFalsy();
     });
     it('should show the duplicate warning message if the reason: duplicate',
        function() {
-      var $groupWarning = this.$node.select('selectorWarningEmptyGroup');
+      var $groupWarning = this.component.select('selectorWarningDuplicateGroup');
 
-      $groupWarning.toggleClass('hidden', true);
+      this.$node.show();
+      $groupWarning.hide();
 
-      this.$node.trigger('data-invalid_group', {reason: 'duplicate'});
+      $(document).trigger('data-invalid_add_group', {reason: 'duplicate'});
 
       expect($groupWarning.is(':hidden')).toBeFalsy();
-
     });
     it('should hide the loading icon', function() {
       this.$node.select('selectorLoadingIcon').show(); // Ensure already showing.
@@ -145,11 +146,11 @@ describeComponent('component/ui-add_group', function () {
   describe('on data-loading_group', function() {
     it('should unhide a spinner on the form', function() {
 
-      this.$node.select('selectorLoadingIcon').hide(); // Unsure hidden in test.
+      this.component.select('selectorLoadingIcon').hide(); // Unsure hidden.
 
-      this.$node.trigger('data-loading_group');
+      this.component.trigger('data-loading_group');
 
-      expect(this.$node.select('selectorLoadingIcon').is(':hidden'))
+      expect(this.component.select('selectorLoadingIcon').is(':hidden'))
         .toBeFalsy();
     });
   });
@@ -158,7 +159,7 @@ describeComponent('component/ui-add_group', function () {
     it('should hide itself', function() {
       this.$node.show(); // Ensure its showing, as in activated state.
 
-      this.$node.trigger('click', this.component.attr.selectorCancelButton);
+      this.component.trigger(this.component.attr.selectorCancelButton, 'click');
 
       expect(this.$node.is(':hidden')).toBeTruthy();
     });
@@ -167,7 +168,7 @@ describeComponent('component/ui-add_group', function () {
 
       eventSpy = spyOnEvent(this.$node, 'ui-deactivate_group_add');
 
-      this.$node.trigger('click', this.component.attr.selectorCancelButton);
+      this.component.trigger(this.component.attr.selectorCancelButton, 'click');
 
       expect(eventSpy).toHaveBeenTriggeredOn(this.$node);
     });

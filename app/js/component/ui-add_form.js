@@ -21,7 +21,7 @@ define(function (require) {
   function addForm() {
     this.defaultAttrs({
       selectorSymbol: '.js-symbol',
-      selectorAddGroup: '.js-addGroup',
+      selectorAddGroup: '.js-addGroupButton',
       selectorGroups: '.js-groups',
       selectorActiveGroups: '.js-activeGroups',
       tmpltextGroupSelectOption: tmpltextGroupSelectOption
@@ -30,9 +30,9 @@ define(function (require) {
     this.after('initialize', function () {
 
       this.on('submit', this.handleSymbolAdd);
-      this.on('click ' + this.attr.selectorAddGroup, this.handleAddGroup); // :(
-      this.on('data-load_groups', this.handleLoadGroups);
-      this.on('data-added_group', this.handleAddedGroup);
+      this.on(document, 'data-load_groups', this.handleLoadGroups);
+      this.on(document, 'data-added_group', this.handleAddedGroup);
+      this.on(this.attr.selectorGroups, 'change', this.handleSelectChange);
     });
 
     /**
@@ -62,9 +62,8 @@ define(function (require) {
     /**
      * Handler for when add group button is clicked
      */
-    this.handleAddGroup = function(ev) {
-      ev.preventDefault();
-      this.trigger('ui-add_group');
+    this.handleAddGroup = function() {
+      this.trigger('ui-wanted_new_group');
     };
 
     /**
@@ -82,11 +81,22 @@ define(function (require) {
       }
     };
 
+    this.handleSelectChange = function(ev, data) {
+      ev.preventDefault();
+      var $selected = this.select('selectorGroups')
+          .find('option:selected'),
+          selector = this.attr.selectorAddGroup;
+
+      if ($selected.hasClass(selector.substr(1))) {
+        this.handleAddGroup();
+      }
+    };
+
     /**
      * Remove all active group options from the node
      */
     this.clearGroups = function() {
-      this.$node.select('selectorActiveGroups').remove();
+      this.select('selectorActiveGroups').remove();
     };
 
     /**
@@ -100,7 +110,7 @@ define(function (require) {
       groupHtml = this.renderTemplate(this.attr.tmpltextGroupSelectOption,
                                       {name: group});
 
-      this.$node.select('selectorGroups').append(groupHtml);
+      this.select('selectorGroups').append(groupHtml);
     };
 
     /**
@@ -123,7 +133,7 @@ define(function (require) {
           groupsHtml += groupHtml;
         }
         
-        this.$node.select('selectorGroups').append(groupsHtml);
+        this.select('selectorGroups').append(groupsHtml);
       }
     };
 
@@ -134,10 +144,8 @@ define(function (require) {
      * @param {String} group The group name
      */
     this.selectGroup = function(group) {
-      this.$node.select('selectorGroups').val(group).change();
-      this.$node.select('selectorGroups')
+      this.select('selectorGroups')
           .find('option[value="'+ group +'"]').prop('selected', true);
-
     };
   }
 });
