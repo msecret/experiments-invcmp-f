@@ -61,15 +61,17 @@ describeComponent('component/data-groups', function () {
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
     it('should trigger data-added_group if adding was successful', function() {
-      var eventSpy;
+      var eventSpy,
+          expected = 'newGroup';
 
       eventSpy = spyOnEvent(document, 'data-added_group');
 
-      this.component.trigger('ui-add_group', {group: 'newGroupA'});
+      this.component.trigger('ui-add_group', {group: expected});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
+      expect(eventSpy.mostRecentCall.data).toEqual({group: expected});
     });
-    it('should trigger data-loaded_group on success', function() {
+    it('should trigger data-loaded_group with new group on success', function() {
       var eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-loaded_group');

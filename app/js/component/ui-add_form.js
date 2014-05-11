@@ -32,6 +32,7 @@ define(function (require) {
       this.on('submit', this.handleSymbolAdd);
       this.on('click ' + this.attr.selectorAddGroup, this.handleAddGroup); // :(
       this.on('data-load_groups', this.handleLoadGroups);
+      this.on('data-added_group', this.handleAddedGroup);
     });
 
     /**
@@ -67,10 +68,39 @@ define(function (require) {
     };
 
     /**
+     * Handles when a new group is added.
+     *
+     * @param {Object} ev The jQuery event object.
+     * @param {Object} data The data, should contain group name
+     */
+    this.handleAddedGroup = function(ev, data) {
+      var group = data.group;
+
+      if (group) {
+        this.addGroup(data.group);  
+        this.selectGroup(data.group);
+      }
+    };
+
+    /**
      * Remove all active group options from the node
      */
     this.clearGroups = function() {
       this.$node.select('selectorActiveGroups').remove();
+    };
+
+    /**
+     * Adds a single group to the form
+     *
+     * @param {String} group The new group name
+     */
+    this.addGroup = function(group) {
+      var groupHtml;
+       
+      groupHtml = this.renderTemplate(this.attr.tmpltextGroupSelectOption,
+                                      {name: group});
+
+      this.$node.select('selectorGroups').append(groupHtml);
     };
 
     /**
@@ -95,6 +125,19 @@ define(function (require) {
         
         this.$node.select('selectorGroups').append(groupsHtml);
       }
+    };
+
+    /**
+     * Programatically selects the group. Makes no attempt to ensure group
+     * option exists.
+     *
+     * @param {String} group The group name
+     */
+    this.selectGroup = function(group) {
+      this.$node.select('selectorGroups').val(group).change();
+      this.$node.select('selectorGroups')
+          .find('option[value="'+ group +'"]').prop('selected', true);
+
     };
   }
 });

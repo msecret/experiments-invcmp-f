@@ -132,4 +132,43 @@ describeComponent('component/ui-add_form', function () {
       expect(actual).toEqual(expected);
     });
   });
+  describe('on data-added_group', function() {
+    it('should add a new option to the select with the added group', function() {
+      var expected = 'newGroup',
+          actual;
+
+      this.$node.trigger('data-added_group', {group: expected});  
+
+      actual = this.$node.select('selectorActiveGroups')
+          .find('[value='+ expected +']');
+
+      expect(actual.length).toEqual(1);
+    });
+    it('should select the new option', function() {
+      var expected = 'newGroup',
+          actual;
+
+      this.$node.trigger('data-added_group', {group: expected});  
+
+      actual = this.$node.select('selectorGroups')
+          .find(':selected')
+          .val();
+
+      actual = this.$node.select('selectorGroups').find('option:selected').val();
+
+      expect(actual).toEqual(expected);
+    });
+    it('should not add an new option if the group is empty', function() {
+      var expected,
+          actual;
+
+      expected = this.$node.select('selectorGroups').find('option').length;
+
+      this.$node.trigger('data-added_group', {group: null});  
+
+      actual = this.$node.select('selectorGroups').find('option').length;
+
+      expect(actual).toEqual(expected);
+    });
+  });
 });

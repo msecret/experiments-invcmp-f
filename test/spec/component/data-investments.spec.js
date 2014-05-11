@@ -122,4 +122,5 @@ describeComponent('component/data-investments', function () {
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
   });
+
 });
