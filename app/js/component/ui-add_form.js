@@ -43,9 +43,11 @@ define(function (require) {
      */
     this.handleSymbolAdd = function(ev) {
       ev.preventDefault();
-      var symbol = this.select('selectorSymbol').val();
+      var symbol = this.select('selectorSymbol').val(),
+          group = this.select('selectorGroups').val();
 
       this.trigger('ui-add_symbol', {
+        group: group || null,
         symbol: symbol
       });
     };

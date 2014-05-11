@@ -11,7 +11,7 @@ describeComponent('component/ui-add_form', function () {
                       '<select class="js-groups">'+
                         '<option class="js-addGroupNullOption" value="">- '+
                           '</option>'+
-                        '<option class="js-addGroupButton" value="add">add new +'+
+                        '<option class="js-addGroupButton" value="add">add new '+
                           '</option>'+
                       '</select>'+
                       '<input class="js-submit" type="submit" name'+
@@ -33,7 +33,8 @@ describeComponent('component/ui-add_form', function () {
 
       this.$node.trigger('submit');
 
-      expect(eventSpy.mostRecentCall.data).toEqual({symbol: testString});
+      expect(eventSpy.mostRecentCall.data).toEqual({symbol: testString,
+                                                    group: null});
     });
     it('should listen for input submit events and trigger event on document',
        function() {
@@ -44,6 +45,18 @@ describeComponent('component/ui-add_form', function () {
       this.$node.trigger('submit');
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('should pass a group param if a group was selected', function() {
+      var eventSpy,
+          expected = 'testGroupRa';
+
+      eventSpy = spyOnEvent(document, 'ui-add_symbol');
+      this.component.addGroup(expected);
+      this.component.selectGroup(expected);
+
+      this.$node.trigger('submit');
+
+      expect(eventSpy.mostRecentCall.data.group).toEqual(expected);
     });
   });
 
