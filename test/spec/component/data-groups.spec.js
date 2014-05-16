@@ -69,7 +69,7 @@ describeComponent('component/data-groups', function () {
       this.component.trigger('ui-add_group', {group: expected});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      expect(eventSpy.mostRecentCall.data).toEqual({group: expected});
+      expect(eventSpy.mostRecentCall.data).toEqual({group: {name: expected}});
     });
     it('should trigger data-loaded_group with new group on success', function() {
       var eventSpy;

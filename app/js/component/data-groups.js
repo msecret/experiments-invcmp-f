@@ -70,7 +70,7 @@ define(function (require) {
       }
 
       this.groups.push(group);
-      this.trigger('data-added_group', {group: group});
+      this.trigger('data-added_group', {group: {name: group}});
       this.trigger('data-loaded_group');
     };
 
