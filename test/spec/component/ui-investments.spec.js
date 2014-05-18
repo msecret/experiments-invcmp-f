@@ -37,6 +37,116 @@ describeComponent('component/ui-investments', function () {
   });
 
   describe('on data-added_symbol', function() {
+    it('should trigger a ui-added_symbol event', function() {
+      var expected,
+          eventSpy;
+
+      expected = {symbol: 'SYN'};
+      eventSpy = spyOnEvent(document, 'ui-added_symbol');
+
+      $(document).trigger('data-added_symbol', {symbol: expected});
+
+      expect(eventSpy.mostRecentCall.data).toEqual({symbol: expected});
+    });
+    it('should not trigger a ui-added_symbol event if theres no symbol in data', 
+       function() {
+      var expected,
+          eventSpy;
+
+      expected = null;
+      eventSpy = spyOnEvent(document, 'ui-added_symbol');
+
+      $(document).trigger('data-added_symbol', {symbol: expected});
+
+      expect(!eventSpy.called);
+    });
+    it('should not trigger a ui-added_symbol event if the symbol has no symbol ' +
+        'property', function() {
+      var expected,
+          eventSpy;
+
+      expected = {symbol: null};
+      eventSpy = spyOnEvent(document, 'ui-added_symbol');
+
+      $(document).trigger('data-added_symbol', {symbol: expected});
+
+      expect(!eventSpy.called);
+    });
+    it('should add the symbol to the top of the list if no group specified',
+       function() {
+      var expected,
+          actual,
+          actualLen;
+
+      expected = {symbol: 'SYN'};
+
+      $(document).trigger('data-added_symbol', {symbol: expected});
+
+      actual = this.component.select('selectorListEntry').first();
+      actualLen = actual.length;
+
+      expect(actualLen).toEqual(1);
+      expect(actual.data('symbol')).toEqual(expected.symbol);
+    });
+    it('should add multiple symbols to the top of the list if no group specified',
+       function() {
+      var expected,
+          testSym1,
+          actual,
+          actualLen;
+
+      testSym1 = {symbol: 'SYB'};
+      expected = {symbol: 'SYN'};
+
+      $(document).trigger('data-added_symbol', {symbol: testSym1});
+      $(document).trigger('data-added_symbol', {symbol: expected});
+
+      actual = this.component.select('selectorListEntry').first();
+      actualLen = actual.length;
+
+      expect(actualLen).toEqual(1);
+      expect(actual.data('symbol')).toEqual(expected.symbol);
+    });
+    it('should add a symbol to the top of the group specified', function() {
+      var expected,
+          expectedGroup,
+          actual,
+          actualLen;
+
+      expectedGroup = {name: 'TestGroup A'};
+      expected = {symbol: 'SYN', group: expectedGroup};
+      this.component.addGroup(expectedGroup);
+
+      $(document).trigger('data-added_symbol', {symbol: expected});
+
+      actual = this.component.findGroup(expectedGroup.name).next();
+      actualLen = actual.length;
+
+      expect(actualLen).toEqual(1);
+      expect(actual.data('symbol')).toEqual(expected.symbol);
+    });
+    it('should add a symbol to the top of the group specified with multiple',
+       function() {
+      var expected,
+          expectedGroup,
+          testSymbol,
+          actual,
+          actualLen;
+
+      expectedGroup = {name: 'TestGroup A'};
+      testSymbol = {symbol: 'TST', group: expectedGroup};
+      expected = {symbol: 'SYN', group: expectedGroup};
+      this.component.addGroup(expectedGroup);
+
+      $(document).trigger('data-added_symbol', {symbol: testSymbol});
+      $(document).trigger('data-added_symbol', {symbol: expected});
+
+      actual = this.component.findGroup(expectedGroup.name).next();
+      actualLen = actual.length;
+
+      expect(actualLen).toEqual(1);
+      expect(actual.data('symbol')).toEqual(expected.symbol);
+    });
   });
 
   describe('on data-added_group', function() {

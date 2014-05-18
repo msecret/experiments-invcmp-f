@@ -90,8 +90,8 @@ define(function (require) {
       var group = data.group;
 
       if (group) {
-        this.addGroup(data.group);  
-        this.selectGroup(data.group);
+        this.addGroup(group);  
+        this.selectGroup(group.name);
       }
     };
 
@@ -140,7 +140,7 @@ define(function (require) {
       var groupHtml;
        
       groupHtml = this.renderTemplate(this.attr.tmpltextGroupSelectOption,
-                                      {name: group});
+                                      group);
 
       this.select('selectorGroups').append(groupHtml);
     };

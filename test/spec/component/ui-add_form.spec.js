@@ -48,15 +48,15 @@ describeComponent('component/ui-add_form', function () {
     });
     it('should pass a group param if a group was selected', function() {
       var eventSpy,
-          expected = 'testGroupRa';
+          expected = {name: 'testGroupRa'};
 
       eventSpy = spyOnEvent(document, 'ui-add_symbol');
       this.component.addGroup(expected);
-      this.component.selectGroup(expected);
+      this.component.selectGroup(expected.name);
 
       this.$node.trigger('submit');
 
-      expect(eventSpy.mostRecentCall.data.group).toEqual(expected);
+      expect(eventSpy.mostRecentCall.data.group).toEqual(expected.name);
     });
   });
 
@@ -155,24 +155,24 @@ describeComponent('component/ui-add_form', function () {
 
   describe('on data-added_group', function() {
     it('should add a new option to the select with the added group', function() {
-      var expected = 'newGroup',
+      var expected = {name: 'newGroup'},
           actual;
 
       $(document).trigger('data-added_group', {group: expected});
 
-      actual = this.$node.find('option[value="'+ expected +'"]');
+      actual = this.$node.find('option[value="'+ expected.name +'"]');
 
       expect(actual.length).toEqual(1);
     });
     it('should select the new option', function() {
-      var expected = 'newGroupX',
+      var expected = {name: 'newGroupX'},
           actual;
 
       $(document).trigger('data-added_group', {group: expected});
 
       actual = this.component.select('selectorGroups').val();
 
-      expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected.name);
     });
     it('should not add an new option if the group is empty', function() {
       var expected,
