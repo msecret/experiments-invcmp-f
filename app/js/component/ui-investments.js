@@ -103,11 +103,13 @@ define(function (require) {
      * @param {Object} group The group object.
      */
     this.addSymbolToGroup = function(symbol, group) {
-      var groupSelector;
+      var $groupSelector,
+          html;
 
-      groupSelector = this.findGroup(group.name);
+      $groupSelector = this.findGroup(group.name);
+      html = this.renderTemplate(this.attr.tmpltextSymbolTr, symbol);
 
-      this._addSymbol(symbol, groupSelector);
+      $groupSelector.after(html);
     };
     
     /**
@@ -116,7 +118,12 @@ define(function (require) {
      * @param {Object} symbol The symbol object to add.
      */
     this.addSymbolNoGroup = function(symbol) {
-      this._addSymbol(symbol, this.select('selectorList'));
+      var html;
+
+      
+      html = this.renderTemplate(this.attr.tmpltextSymbolTr, symbol);
+
+      this.select('selectorList').prepend(html);
     };
 
     this._addSymbol = function(symbol, $anchor) {
@@ -125,6 +132,9 @@ define(function (require) {
       html = this.renderTemplate(this.attr.tmpltextSymbolTr, symbol);
 
       $anchor.after(html);
+      if (!$anchor) {
+
+      }
     };
 
   }

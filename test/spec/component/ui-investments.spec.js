@@ -82,7 +82,7 @@ describeComponent('component/ui-investments', function () {
 
       $(document).trigger('data-added_symbol', {symbol: expected});
 
-      actual = this.component.select('selectorListEntry').first();
+      actual = this.component.select('selectorList').find('tr').first();
       actualLen = actual.length;
 
       expect(actualLen).toEqual(1);
@@ -101,7 +101,7 @@ describeComponent('component/ui-investments', function () {
       $(document).trigger('data-added_symbol', {symbol: testSym1});
       $(document).trigger('data-added_symbol', {symbol: expected});
 
-      actual = this.component.select('selectorListEntry').first();
+      actual = this.component.select('selectorList').find('tr').first();
       actualLen = actual.length;
 
       expect(actualLen).toEqual(1);
