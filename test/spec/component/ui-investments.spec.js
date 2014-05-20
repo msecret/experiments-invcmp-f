@@ -198,4 +198,25 @@ describeComponent('component/ui-investments', function () {
       expect(actual.prop('outerHTML')).toEqual(expected);
     });
   });
+
+  describe('on click symbol delete', function() {
+    it('should trigger a ui-delete_symbol event on itself with symbol object',
+       function() {
+      var expected,
+          eventSpy,
+          entryDeleteSelector;
+
+      expected = {symbol: 'SYN'};
+      eventSpy = spyOnEvent(document, 'ui-delete_symbol');
+      this.component.addSymbolNoGroup(expected);
+
+      entryDeleteSelector = this.component.findSymbol(expected.symbol)
+          .find(this.component.attr.selectorEntryDelete)
+          .selector;
+
+      this.component.trigger(entryDeleteSelector, 'click');
+
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+     });
+  });
 });

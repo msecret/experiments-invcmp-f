@@ -23,17 +23,30 @@ define(function (require) {
    */
   function uiInvestments() {
     this.defaultAttrs({
-      selectorList: '.js-investmentList_Body',
-      selectorListEntry: '.js-investmentList_Entry',
       selectorGroups: '.js-investmentList_Group',
+      selectorList: '.js-investmentList_Body',
+      selectorEntry: '.js-investmentList_Entry',
+      selectorEntryDelete: '.js-investmentListEntryControls-Delete', 
+      selectorEntryUpdate: '.js-investmentListEntryControls-Update', 
       numCols: 18,
       tmpltextGroupTr: tmpltextGroupTr,
       tmpltextSymbolTr: tmpltextSymbolTr
     });
 
     this.after('initialize', function () {
+      var self = this;
+
       this.on(document, 'data-added_group', this.handleAddedGroup);
       this.on(document, 'data-added_symbol', this.handleAddedSymbol);
+      this.on(this.attr.selectorEntryDelete, 'click', this.handleEntryDelete);
+
+      // Have to attach to $node because flight on doesn't support non-present
+      // handlers :(.
+      this.$node.on('click', this.attr.selectorEntryDelete, function(ev) {
+        self.handleEntryDelete(ev, self);
+      });
+
+      this.addSymbolNoGroup({symbol: 'SYN'});
     });
 
     /**
@@ -63,6 +76,9 @@ define(function (require) {
       this.trigger('ui-added_group', data);
     };
 
+    /**
+     * Handle added symbol events
+     */
     this.handleAddedSymbol = function(ev, data) {
       var symbol;
       if (data.symbol && data.symbol.symbol) {
@@ -77,6 +93,19 @@ define(function (require) {
 
         this.trigger('ui-added_symbol', data);
       }
+    };
+
+    /**
+     * Handle the delete button for an entry being clicked
+     *
+     * @param {Object} ev The jQuery event object
+     */
+    this.handleEntryDelete = function(ev, self) {
+      ev.preventDefault();
+      var $target = $(ev.currentTarget),
+          symbol = $target.data('symbol');
+
+      self.$node.trigger('ui-delete_symbol', {symbol: symbol});
     };
 
     /**
