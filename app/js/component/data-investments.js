@@ -21,11 +21,13 @@ define(function (require) {
 
   function dataInvestments() {
     this.defaultAttrs({
-      urlCreate: '/symbols'
+      urlCreate: '/symbols',
+      urlDelete: '/symbols/'
     });
 
     this.after('initialize', function () {
       this.on('ui-add_symbol', this.handleSearchedSymbol);
+      this.on('ui-delete_symbol', this.handleDeleteSymbol);
     });
 
     /**
@@ -39,7 +41,7 @@ define(function (require) {
      * @event data-invalid_symbol When the data is missing, symbol is missing
      * or the symbol is not a string.
      * @event data-not_found_symbol When the symbol was not found on server.
-     * @event data-failure_request When requests to the server failed.
+     * @event data-failed_request When requests to the server failed.
      */
     this.handleSearchedSymbol = function(ev, data) {
       if (!data || !data.symbol || (typeof data.symbol !== 'string') ) {
@@ -57,10 +59,40 @@ define(function (require) {
           if (resp.status === 400) {
             self.trigger('data-not_found_symbol');
           } else {
-            self.trigger('data-failure_request');
+            self.trigger('data-failed_request');
           }
         }
       });
+    };
+
+    /**
+     * Handle when the ui wants to delete a symbol.
+     *
+     * @param {Object} ev jQuery event object
+     * @param {Object} data Data object, should contain symbol to be deleted.
+     */
+    this.handleDeleteSymbol = function(ev, data) {
+      if (!data || !data.symbol || (typeof data.symbol !== 'string') ) {
+        this.trigger('data-invalid_symbol');
+        return;
+      }
+      var self = this;
+
+      this.deleteSymbol(data.symbol, {
+        success: function(resp) {
+          self.trigger('data-deleted_symbol', resp);
+        },
+        error: function(resp) {
+          var reason = {};
+          if (resp.status === 404) {
+            reason.reason = 'not found';
+            self.trigger('data-failed_symbol', reason);
+          } else {
+            self.trigger('data-failed_request');
+          }
+        }
+      });
+
     };
 
     /**
@@ -80,6 +112,28 @@ define(function (require) {
       this.post({
         url: this.attr.urlCreate,
         data: data,
+        success: function(resp) {
+          opts.success && opts.success(resp);
+        },
+        error: function(resp) {
+          opts.error && opts.error(resp);
+        }
+      });
+    };
+
+    /**
+     * Deletes a symbol.
+     *
+     * Executes a delete request to /symbol/{sym}.
+     *
+     *  @param {String} symbolName The symbol 3-4 letter name.
+     *  @param {Object} opts Hash containing just succes and error handlers.
+     */
+    this.deleteSymbol = function(symbolName, opts) {
+      var opts = opts || {};
+
+      this.destroy({
+        url: this.attr.urlDelete + symbolName,
         success: function(resp) {
           opts.success && opts.success(resp);
         },

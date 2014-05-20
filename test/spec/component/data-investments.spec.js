@@ -106,17 +106,107 @@ describeComponent('component/data-investments', function () {
       expect(eventSpy).toHaveBeenTriggeredOn(document);
 
     });
-    it('should fire data-failure_request when server returns failure but 400', 
+    it('should fire data-failed_request when server returns failure but 400', 
        function() {
       var testSymbol = 'TST',
           eventSpy;
 
-      eventSpy = spyOnEvent(document, 'data-failure_request');
+      eventSpy = spyOnEvent(document, 'data-failed_request');
       server.respondWith('POST', '/symbols',
                               [500, { 'Content-Type': 'application/json' },
                                '']);
 
       this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+  });
+
+  describe('on ui-delete_symbol', function() {
+    var server;
+
+    beforeEach(function() {
+      server = sinon.fakeServer.create();
+    });
+
+    afterEach(function() {
+      server.restore();
+    });
+
+    it('should request a DELETE on /symbols/{name}', function() {
+      var expected = {symbol: 'SYN'};
+
+      this.$node.trigger('ui-delete_symbol', expected);
+
+      expect(server.requests[0]).toBeDefined();
+      expect(server.requests[0].url).toEqual('/symbols/'+ expected.symbol);
+      expect(server.requests[0].method).toEqual('POST');
+    });
+    it('should trigger a data-deleted_symbol on document with the symbol',
+       function() {
+      var testSymbol = 'TST',
+          expected = {symbol: 'DDC'},
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-deleted_symbol');
+      server.respondWith('POST', '/symbols/'+ expected.symbol,
+                              [200, { 'Content-Type': 'application/json' },
+                               JSON.stringify(expected)]);
+
+      this.$node.trigger('ui-delete_symbol', expected);
+      server.respond();
+
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+    });
+    it('should trigger a data-invalid_symbol if the symbol is missing', 
+       function() {
+      var testSymbol = {},
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-invalid_symbol');
+
+      this.$node.trigger('ui-delete_symbol', testSymbol);
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('should trigger a data-invalid_symbol if the symbol is not a string', 
+       function() {
+      var testSymbol = {symbol: {}},
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-invalid_symbol');
+
+      this.$node.trigger('ui-delete_symbol', testSymbol);
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('should trigger a data-failed_symbol reason:not found if the server'+ 
+       'returns 404', function() {
+      var testSymbol = {symbol: 'TST'},
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-failed_symbol');
+      server.respondWith('DELETE', '/symbols/'+ testSymbol.symbol,
+                              [404, { 'Content-Type': 'application/json' },
+                               '']);
+
+      this.$node.trigger('ui-delete_symbol', testSymbol);
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+      expect(eventSpy.mostRecentCall.data.reason).toEqual('not found');
+    });
+    it('should trigger a data-failed_request if server returns 500', function() {
+      var testSymbol = {symbol: 'MMN'},
+          eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-failed_request');
+      server.respondWith('POST', '/symbols/'+ testSymbol.symbol,
+                              [503, { 'Content-Type': 'application/json' },
+                               'Server Error']);
+
+      this.$node.trigger('ui-delete_symbol', testSymbol);
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
