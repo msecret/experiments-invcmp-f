@@ -38,6 +38,7 @@ define(function (require) {
 
       this.on(document, 'data-added_group', this.handleAddedGroup);
       this.on(document, 'data-added_symbol', this.handleAddedSymbol);
+      this.on(document, 'data-deleted_symbol', this.handleDeletedSymbol);
       this.on(this.attr.selectorEntryDelete, 'click', this.handleEntryDelete);
 
       // Have to attach to $node because flight on doesn't support non-present
@@ -99,13 +100,27 @@ define(function (require) {
      * Handle the delete button for an entry being clicked
      *
      * @param {Object} ev The jQuery event object
+     * @param {Object} self The this defined in this class, currently a hack.
      */
     this.handleEntryDelete = function(ev, self) {
       ev.preventDefault();
       var $target = $(ev.currentTarget),
           symbol = $target.data('symbol');
-
       self.$node.trigger('ui-delete_symbol', {symbol: symbol});
+    };
+
+    /**
+     * Handle a symbol deleted in data.
+     *
+     * @param {Object} ev The jQuery event object
+     * @param {Object} data The data passed, should contain symbol deleted.
+     */
+    this.handleDeletedSymbol = function(ev, data) {
+      if (!data.symbol || !data.symbol.symbol) {
+        return;
+      }
+
+      this.deleteSymbol(data.symbol);
     };
 
     /**
@@ -163,6 +178,21 @@ define(function (require) {
       $anchor.after(html);
       if (!$anchor) {
 
+      }
+    };
+
+    /**
+     * Delete a symbol from the list DOM
+     *
+     * @param {Object} symbol The symbol data object.
+     */
+    this.deleteSymbol = function(symbol) {
+      var $symbol;
+
+      $symbol = this.findSymbol(symbol.symbol);
+      if ($symbol.length) {
+        $symbol.remove();
+        this.trigger('ui-deleted_symbol', symbol);
       }
     };
 

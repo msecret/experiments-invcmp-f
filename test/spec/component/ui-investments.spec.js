@@ -219,4 +219,79 @@ describeComponent('component/ui-investments', function () {
       expect(eventSpy.mostRecentCall.data).toEqual(expected);
      });
   });
+
+  describe('on data-deleted_symbol', function() {
+    it('should remove the lone investment from DOM if found', function() {
+      var expectedSymbol,
+          expectedSymbolSelector,
+          actual;
+          
+  
+      expectedSymbol = {symbol: 'TST'};
+      this.component.addSymbolNoGroup(expectedSymbol);
+      actual = this.component.findSymbol(expectedSymbol.symbol);
+
+      expect(actual.length).toEqual(1);
+      
+      $(document).trigger('data-deleted_symbol', {symbol: expectedSymbol});
+
+      actual = this.component.findSymbol(expectedSymbol.symbol);
+      expect(actual.length).toEqual(0);
+    });
+    it('should remove the grouped investment from DOM if found', function() {
+      var expectedSymbol,
+          expectedSymbolSelector,
+          actual;
+          
+  
+      expectedSymbol = {symbol: 'TST', group: {name: 'testGroup'}};
+
+      this.component.addGroup(expectedSymbol.group);
+      this.component.addSymbolNoGroup(expectedSymbol);
+      actual = this.component.findSymbol(expectedSymbol.symbol);
+
+      expect(actual.length).toEqual(1);
+      
+      $(document).trigger('data-deleted_symbol', {symbol: expectedSymbol});
+
+      actual = this.component.findSymbol(expectedSymbol.symbol);
+      expect(actual.length).toEqual(0);
+    });
+    it('should not remove anything if investment not in DOM', function() {
+      var testSymbolA,
+          testSymbolB,
+          randomSymbol,
+          actual;
+      this.component.select('selectorList').html(''); // Clear list DOM.
+      testSymbolA = {symbol: 'TST'};
+      testSymbolB = {symbol: 'TS1', group: {name: 'testGroupB'}};
+      randomSymbol = {symbol: 'RND'};
+
+      this.component.addGroup(testSymbolB.group);
+      this.component.addSymbolNoGroup(testSymbolA);
+      this.component.addSymbolToGroup(testSymbolB, testSymbolB.group);
+      actual = this.component.select('selectorList')
+          .find('tr');
+
+      expect(actual.length).toEqual(3);
+
+      $(document).trigger('data-deleted_symbol', {symbol: randomSymbol});
+
+      actual = this.component.select('selectorList')
+          .find('tr');
+
+      expect(actual.length).toEqual(3);
+    });
+    it('should trigger a ui-deleted_symbol on itself', function() {
+      var expected,
+          eventSpy;
+
+      expected = {symbol: 'SYN'};
+      eventSpy = spyOnEvent(document, 'ui-deleted_symbol');
+
+      $(document).trigger('data-deleted_symbol', {symbol: expected});
+
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+    });
+  });
 });
