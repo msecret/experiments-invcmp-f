@@ -199,6 +199,27 @@ describeComponent('component/ui-investments', function () {
     });
   });
 
+  describe('on click symbol update', function() {
+    it('should trigger a ui-update_symbol event on itself with symbol object',
+       function() {
+      var expected,
+          eventSpy,
+          entryUpdateSelector;
+
+      expected = {symbol: 'SYN'};
+      eventSpy = spyOnEvent(document, 'ui-update_symbol');
+      this.component.addSymbolNoGroup(expected);
+
+      entryUpdateSelector = this.component.findSymbol(expected.symbol)
+          .find(this.component.attr.selectorEntryUpdate)
+          .selector;
+
+      this.component.trigger(entryUpdateSelector, 'click');
+
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+    });
+  });
+
   describe('on click symbol delete', function() {
     it('should trigger a ui-delete_symbol event on itself with symbol object',
        function() {

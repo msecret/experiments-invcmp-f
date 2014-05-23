@@ -46,6 +46,9 @@ define(function (require) {
       this.$node.on('click', this.attr.selectorEntryDelete, function(ev) {
         self.handleEntryDelete(ev, self);
       });
+      this.$node.on('click', this.attr.selectorEntryUpdate, function(ev) {
+        self.handleEntryUpdate(ev, self);
+      });
 
       this.addSymbolNoGroup({symbol: 'SYN'});
     });
@@ -109,6 +112,18 @@ define(function (require) {
       self.$node.trigger('ui-delete_symbol', {symbol: symbol});
     };
 
+    /**
+     * Handle the update button for an entry being clicked
+     *
+     * @param {Object} ev The jQuery event object
+     * @param {Object} self The this defined in this class, currently a hack.
+     */
+    this.handleEntryUpdate = function(ev, self) {
+      ev.preventDefault();
+      var $target = $(ev.currentTarget),
+          symbol = $target.data('symbol');
+      self.$node.trigger('ui-update_symbol', {symbol: symbol});
+    };
     /**
      * Handle a symbol deleted in data.
      *
