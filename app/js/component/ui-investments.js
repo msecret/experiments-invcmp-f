@@ -84,15 +84,17 @@ define(function (require) {
      * Handle added symbol events
      */
     this.handleAddedSymbol = function(ev, data) {
-      var symbol;
-      if (data.symbol && data.symbol.symbol) {
-        symbol = data.symbol;
+      var investment;
 
-        if (symbol.group) {
-          this.addSymbolToGroup(symbol, symbol.group);
+      if (data.symbol && data.symbol.symbol) {
+        investment = data.symbol;
+
+        if (investment.group) {
+          this.addSymbolToGroup(investment, 
+                                investment.group);
         }
         else {
-          this.addSymbolNoGroup(symbol);
+          this.addSymbolNoGroup(investment);
         }
 
         this.trigger('ui-added_symbol', data);

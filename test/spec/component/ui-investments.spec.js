@@ -41,7 +41,7 @@ describeComponent('component/ui-investments', function () {
       var expected,
           eventSpy;
 
-      expected = {symbol: 'SYN'};
+      expected = {symbol: {val:'SYN'}};
       eventSpy = spyOnEvent(document, 'ui-added_symbol');
 
       $(document).trigger('data-added_symbol', {symbol: expected});
@@ -78,7 +78,7 @@ describeComponent('component/ui-investments', function () {
           actual,
           actualLen;
 
-      expected = {symbol: 'SYN'};
+      expected = {symbol: {val: 'SYN'}};
 
       $(document).trigger('data-added_symbol', {symbol: expected});
 
@@ -86,7 +86,7 @@ describeComponent('component/ui-investments', function () {
       actualLen = actual.length;
 
       expect(actualLen).toEqual(1);
-      expect(actual.data('symbol')).toEqual(expected.symbol);
+      expect(actual.data('symbol')).toEqual(expected.symbol.val);
     });
     it('should add multiple symbols to the top of the list if no group specified',
        function() {
@@ -95,8 +95,8 @@ describeComponent('component/ui-investments', function () {
           actual,
           actualLen;
 
-      testSym1 = {symbol: 'SYB'};
-      expected = {symbol: 'SYN'};
+      testSym1 = {symbol: {val: 'SYB'}};
+      expected = {symbol: {val:'SYN'}};
 
       $(document).trigger('data-added_symbol', {symbol: testSym1});
       $(document).trigger('data-added_symbol', {symbol: expected});
@@ -105,7 +105,7 @@ describeComponent('component/ui-investments', function () {
       actualLen = actual.length;
 
       expect(actualLen).toEqual(1);
-      expect(actual.data('symbol')).toEqual(expected.symbol);
+      expect(actual.data('symbol')).toEqual(expected.symbol.val);
     });
     it('should add a symbol to the top of the group specified', function() {
       var expected,
@@ -114,7 +114,7 @@ describeComponent('component/ui-investments', function () {
           actualLen;
 
       expectedGroup = {name: 'TestGroup A'};
-      expected = {symbol: 'SYN', group: expectedGroup};
+      expected = {symbol: {val: 'SYN'}, group: expectedGroup};
       this.component.addGroup(expectedGroup);
 
       $(document).trigger('data-added_symbol', {symbol: expected});
@@ -123,7 +123,7 @@ describeComponent('component/ui-investments', function () {
       actualLen = actual.length;
 
       expect(actualLen).toEqual(1);
-      expect(actual.data('symbol')).toEqual(expected.symbol);
+      expect(actual.data('symbol')).toEqual(expected.symbol.val);
     });
     it('should add a symbol to the top of the group specified with multiple',
        function() {
@@ -134,8 +134,8 @@ describeComponent('component/ui-investments', function () {
           actualLen;
 
       expectedGroup = {name: 'TestGroup A'};
-      testSymbol = {symbol: 'TST', group: expectedGroup};
-      expected = {symbol: 'SYN', group: expectedGroup};
+      testSymbol = {symbol: {val: 'TST'}, group: expectedGroup};
+      expected = {symbol: {val: 'SYN'}, group: expectedGroup};
       this.component.addGroup(expectedGroup);
 
       $(document).trigger('data-added_symbol', {symbol: testSymbol});
@@ -145,7 +145,7 @@ describeComponent('component/ui-investments', function () {
       actualLen = actual.length;
 
       expect(actualLen).toEqual(1);
-      expect(actual.data('symbol')).toEqual(expected.symbol);
+      expect(actual.data('symbol')).toEqual(expected.symbol.val);
     });
   });
 
@@ -206,17 +206,17 @@ describeComponent('component/ui-investments', function () {
           eventSpy,
           entryUpdateSelector;
 
-      expected = {symbol: 'SYN'};
+      expected = {symbol: {val: 'SYN'}};
       eventSpy = spyOnEvent(document, 'ui-update_symbol');
       this.component.addSymbolNoGroup(expected);
 
-      entryUpdateSelector = this.component.findSymbol(expected.symbol)
+      entryUpdateSelector = this.component.findSymbol(expected.symbol.val)
           .find(this.component.attr.selectorEntryUpdate)
           .selector;
 
       this.component.trigger(entryUpdateSelector, 'click');
 
-      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+      expect(eventSpy.mostRecentCall.data).toEqual({symbol: 'SYN'});
     });
   });
 
@@ -227,17 +227,17 @@ describeComponent('component/ui-investments', function () {
           eventSpy,
           entryDeleteSelector;
 
-      expected = {symbol: 'SYN'};
+      expected = {symbol: {val: 'SYN'}};
       eventSpy = spyOnEvent(document, 'ui-delete_symbol');
       this.component.addSymbolNoGroup(expected);
 
-      entryDeleteSelector = this.component.findSymbol(expected.symbol)
+      entryDeleteSelector = this.component.findSymbol(expected.symbol.val)
           .find(this.component.attr.selectorEntryDelete)
           .selector;
 
       this.component.trigger(entryDeleteSelector, 'click');
 
-      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+      expect(eventSpy.mostRecentCall.data).toEqual({symbol: expected.symbol.val});
      });
   });
 
@@ -248,15 +248,15 @@ describeComponent('component/ui-investments', function () {
           actual;
           
   
-      expectedSymbol = {symbol: 'TST'};
+      expectedSymbol = {symbol: {val: 'TST'}};
       this.component.addSymbolNoGroup(expectedSymbol);
-      actual = this.component.findSymbol(expectedSymbol.symbol);
+      actual = this.component.findSymbol(expectedSymbol.symbol.val);
 
       expect(actual.length).toEqual(1);
       
-      $(document).trigger('data-deleted_symbol', {symbol: expectedSymbol});
+      $(document).trigger('data-deleted_symbol', {symbol: {symbol: 'TST'}});
 
-      actual = this.component.findSymbol(expectedSymbol.symbol);
+      actual = this.component.findSymbol(expectedSymbol.symbol.val);
       expect(actual.length).toEqual(0);
     });
     it('should remove the grouped investment from DOM if found', function() {
@@ -264,18 +264,18 @@ describeComponent('component/ui-investments', function () {
           expectedSymbolSelector,
           actual;
           
-  
-      expectedSymbol = {symbol: 'TST', group: {name: 'testGroup'}};
+      expectedSymbol = {symbol: {val: 'TST'}, group: {name: 'testGroup'}};
 
       this.component.addGroup(expectedSymbol.group);
       this.component.addSymbolNoGroup(expectedSymbol);
-      actual = this.component.findSymbol(expectedSymbol.symbol);
+      actual = this.component.findSymbol(expectedSymbol.symbol.val);
 
       expect(actual.length).toEqual(1);
       
-      $(document).trigger('data-deleted_symbol', {symbol: expectedSymbol});
+      $(document).trigger('data-deleted_symbol', {symbol: {symbol: 'TST'}});
 
-      actual = this.component.findSymbol(expectedSymbol.symbol);
+      actual = this.component.findSymbol(expectedSymbol.symbol.val);
+
       expect(actual.length).toEqual(0);
     });
     it('should not remove anything if investment not in DOM', function() {
@@ -307,8 +307,9 @@ describeComponent('component/ui-investments', function () {
       var expected,
           eventSpy;
 
-      expected = {symbol: 'SYN'};
+      expected = {symbol: 'POP'};
       eventSpy = spyOnEvent(document, 'ui-deleted_symbol');
+      this.component.addSymbolNoGroup({symbol: {val: 'POP'}});
 
       $(document).trigger('data-deleted_symbol', {symbol: expected});
 

@@ -107,13 +107,15 @@ define(function (require) {
      *  @param {Object} opts Hash containing just succes and error handlers.
      */
     this.createSymbol = function(data, opts) {
-      var opts = opts || {};
+      var self = this,
+          opts = opts || {};
 
       this.post({
         url: this.attr.urlCreate,
         data: data,
         success: function(resp) {
-          opts.success && opts.success(resp);
+          var investment = self._setTimeStampOnInvestment(resp.symbol);
+          opts.success && opts.success(investment);
         },
         error: function(resp) {
           opts.error && opts.error(resp);
@@ -141,6 +143,35 @@ define(function (require) {
           opts.error && opts.error(resp);
         }
       });
+    };
+
+    /**
+     * Set the timestamp and formatted timestamp on each field in the
+     * investment.
+     *
+     * @param {Object} investment The investment oject to add timestamp to.
+     *
+     * @return {Object} Modified investment.
+     */
+    this._setTimeStampOnInvestment = function(investment) {
+      var timestamp = new Date(),
+          formattedTimestamp,
+          key,
+          field;
+
+      formattedTimestamp = timestamp.getDate() + '/' + 
+        timestamp.getMonth() + '/' +
+        timestamp.getFullYear();
+
+      for (key in investment) {
+        field = investment[key];
+        if (field.val) {
+          field.updatedAt = timestamp;
+          field.updatedAtFormatted = formattedTimestamp;
+        }
+      }
+
+      return investment;
     };
   }
 

@@ -62,7 +62,7 @@ describeComponent('component/data-investments', function () {
     it('should trigger data-added_symbol with symbol data if the request '+
        'succeeded', function() {
       var testSymbol = 'TST',
-          expected = {symbol: 'TST', group: 'test'},
+          expected = {symbol: {symbol: {val: 'TST'}, group: 'test'}},
           eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-added_symbol');
@@ -73,11 +73,12 @@ describeComponent('component/data-investments', function () {
       this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
       server.respond();
 
-      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+      expect(eventSpy.mostRecentCall.data.symbol.val).toEqual(
+        expected.symbol.symbol.val);
     });
     it('should leave group null if no group is present in data', function() {
       var testSymbol = 'TST',
-          expected = {symbol: 'TST'},
+          expected = {symbol: {symbol: {val: 'TST'}}},
           eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-added_symbol');
@@ -88,7 +89,7 @@ describeComponent('component/data-investments', function () {
       this.$node.trigger('ui-add_symbol', {symbol: testSymbol});
       server.respond();
 
-      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+      expect(eventSpy.mostRecentCall.data.symbol.val).toEqual(testSymbol);
     });
     it('should fire data-not_found_symbol when server returns 400 failures',
        function() {
