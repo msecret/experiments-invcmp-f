@@ -1,8 +1,18 @@
-# flight-invcmp
+# stockarator
 
 [![Build Status](https://travis-ci.org/msecret/experiments-invcmp-f.svg?branch=master)](https://travis-ci.org/msecret/experiments-invcmp-f)
 
 version 0.0.3
+
+## About
+An experimental UI for a simple spreadsheet program for comparing various 
+stock market investments. Used by myself. This repository is only the front
+end of the app.
+
+### Functionality
+- Add new stock market symbols with up to date data from Yahoo Finnance.
+- Update specific fields of data for each symbol.
+- Cluster symbols by groups.
 
 ## Installation
 
