@@ -220,6 +220,30 @@ describeComponent('component/ui-investments', function () {
     });
   });
 
+  describe('on click symbol field', function() {
+    it('should trigger a ui-edit_symbol_field event on itself with symbol '+
+       'and field', function() {
+      var expected,
+          eventSpy,
+          testSymbol = {symbol: {val: 'SYN'}, cap:{val: '1000'}},
+          field = 'cap',
+          entryFieldSelector;
+
+      eventSpy = spyOnEvent(document, 'ui-edit_symbol_field');
+      this.component.addSymbolNoGroup(testSymbol);
+      expected = {symbol: testSymbol.symbol.val,
+                  field: field};
+
+      entryFieldSelector = this.component.findSymbol(testSymbol.symbol.val)
+          .find('td[name="'+ field +'"]')
+          .selector;
+
+      this.component.trigger(entryFieldSelector, 'dblclick');
+
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+    });
+  });
+
   describe('on click symbol delete', function() {
     it('should trigger a ui-delete_symbol event on itself with symbol object',
        function() {

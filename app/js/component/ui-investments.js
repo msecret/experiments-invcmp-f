@@ -26,6 +26,7 @@ define(function (require) {
       selectorGroups: '.js-investmentList_Group',
       selectorList: '.js-investmentList_Body',
       selectorEntry: '.js-investmentList_Entry',
+      selectorEntryField: '.js-investmentList_Entry_Field',
       selectorEntryDelete: '.js-investmentListEntryControls-Delete', 
       selectorEntryUpdate: '.js-investmentListEntryControls-Update', 
       numCols: 18,
@@ -48,6 +49,9 @@ define(function (require) {
       });
       this.$node.on('click', this.attr.selectorEntryUpdate, function(ev) {
         self.handleEntryUpdate(ev, self);
+      });
+      this.$node.on('dblclick', this.attr.selectorEntryField, function(ev) {
+        self.handleEntryFieldUpdate(ev, self);
       });
 
       this.addSymbolNoGroup({symbol: 'SYN'});
@@ -126,6 +130,25 @@ define(function (require) {
           symbol = $target.data('symbol');
       self.$node.trigger('ui-update_symbol', {symbol: symbol});
     };
+
+    /**
+     * Handles when an entry's field is clicked to edit the field.
+     *
+     * @param {Object} ev The jQuery event object
+     * @param {Object} self The this defined in this class, currently a hack.
+     */
+    this.handleEntryFieldUpdate = function(ev, self) {
+      ev.preventDefault();
+      var $target = $(ev.currentTarget),
+          symbol = $target.parent().data('symbol'),
+          fieldName = $target.attr('name');
+
+      this.trigger('ui-edit_symbol_field', {
+        symbol: symbol,
+        field: fieldName
+      });
+    };
+
     /**
      * Handle a symbol deleted in data.
      *
