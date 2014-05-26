@@ -25,22 +25,26 @@ describeComponent('component/ui-add_form', function () {
   });
 
   describe('on submit', function() {
-    it('should listen for input submit events and trigger ui-add_symbol',
+    it('should listen for input submit events and trigger ui-add_investment',
        function() {
-      var eventSpy;
+      var eventSpy,
+          expected;
 
-      eventSpy = spyOnEvent(document, 'ui-add_symbol');
+      expected = {
+        symbol: 'BNT'
+      };
+      eventSpy = spyOnEvent(document, 'ui-add_investment');
+      this.component.select('selectorSymbol').val(expected.symbol);
 
       this.$node.trigger('submit');
 
-      expect(eventSpy.mostRecentCall.data).toEqual({symbol: testString,
-                                                    group: null});
+      expect(eventSpy.mostRecentCall.data).toEqual({investment: expected});
     });
     it('should listen for input submit events and trigger event on document',
        function() {
       var eventSpy;
 
-      eventSpy = spyOnEvent(document, 'ui-add_symbol');
+      eventSpy = spyOnEvent(document, 'ui-add_investment');
 
       this.$node.trigger('submit');
 
@@ -48,15 +52,23 @@ describeComponent('component/ui-add_form', function () {
     });
     it('should pass a group param if a group was selected', function() {
       var eventSpy,
-          expected = {name: 'testGroupRa'};
+          testInvestmentRequest,
+          expected;
 
-      eventSpy = spyOnEvent(document, 'ui-add_symbol');
+      testInvestmentRequest = {
+        symbol: 'BNM',
+        group: {name: 'TestG1'}
+      };
+      expected = testInvestmentRequest.group;
+
+      eventSpy = spyOnEvent(document, 'ui-add_investment');
       this.component.addGroup(expected);
       this.component.selectGroup(expected.name);
+      this.component.select('selectorSymbol').val(testInvestmentRequest.symbol);
 
       this.$node.trigger('submit');
 
-      expect(eventSpy.mostRecentCall.data.group).toEqual(expected.name);
+      expect(eventSpy.mostRecentCall.data.investment.group).toEqual(expected);
     });
   });
 
@@ -140,12 +152,12 @@ describeComponent('component/ui-add_form', function () {
     });
   });
 
-  describe('on data-added_symbol', function() {
+  describe('on data-added_investment', function() {
     it('should clear the text input form value', function() {
       var actual;
 
       this.component.select('selectorSymbol').val('something');
-      $(document).trigger('data-added_symbol');
+      $(document).trigger('data-added_investment');
 
       actual = this.component.select('selectorSymbol').val();
 

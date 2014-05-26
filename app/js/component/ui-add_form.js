@@ -29,28 +29,32 @@ define(function (require) {
 
     this.after('initialize', function () {
 
-      this.on('submit', this.handleSymbolAdd);
+      this.on('submit', this.handleInvestmentAdd);
       this.on(document, 'data-load_groups', this.handleLoadGroups);
       this.on(document, 'data-added_group', this.handleAddedGroup);
       this.on(document, 'data-deactivate_group_add', this.handleDeactivateGroup);
-      this.on(document, 'data-added_symbol', this.handleAddedSymbol);
+      this.on(document, 'data-added_investment', this.handleAddedInvestment);
       this.on(this.attr.selectorGroups, 'change', this.handleSelectChange);
     });
 
     /**
      * Will take the input from the add form and submit it.
      *
-     * @event ui-add_symbol
+     * @event ui-add_investment
      */
-    this.handleSymbolAdd = function(ev) {
+    this.handleInvestmentAdd = function(ev) {
       ev.preventDefault();
       var symbol = this.select('selectorSymbol').val(),
-          group = this.select('selectorGroups').val();
+          groupName = this.select('selectorGroups').val(),
+          investment;
 
-      this.trigger('ui-add_symbol', {
-        group: group || null,
+      investment = {
         symbol: symbol
-      });
+      };
+      if (groupName) {
+        investment.group = {name: groupName};
+      }
+      this.trigger('ui-add_investment', {investment: investment});
     };
 
     /**
@@ -59,7 +63,7 @@ define(function (require) {
      * @param {Object} ev The jQuery event object
      * @param {Object} data The data payload.
      */
-    this.handleAddedSymbol = function(ev, data) {
+    this.handleAddedInvestment = function(ev, data) {
       this.clearInput();
     };
 
