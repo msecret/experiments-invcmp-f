@@ -21,92 +21,75 @@ define(function (require) {
 
   function dataInvestments() {
     this.defaultAttrs({
-      urlCreate: '/symbols',
-      urlDelete: '/symbols/'
+      urlCreate: '/investments',
+      urlDelete: '/investments/'
     });
 
     this.after('initialize', function () {
-      this.on('ui-add_symbol', this.handleSearchedSymbol);
-      this.on('ui-delete_symbol', this.handleDeleteSymbol);
+      this.on('ui-add_investment', this.handleSearchedInvestment);
+      this.on('ui-delete_investment', this.handleDeleteInvestment);
     });
 
     /**
-     * Will  handle whenver an attempt to add a symbol.
+     * Will  handle whenver an attempt to add an investment.
      *
      * @param {Object} ev Jquery event object.
-     * @param {Object} data The data payload to create symbol with.
-     *
-     * @event data-added_symbol When the request to add the symbol succeeded.
-     *   resp {Object} The response object from the server
-     * @event data-invalid_symbol When the data is missing, symbol is missing
-     * or the symbol is not a string.
-     * @event data-not_found_symbol When the symbol was not found on server.
-     * @event data-failed_request When requests to the server failed.
+     * @param {Object} data The data payload to create investment with.
      */
-    this.handleSearchedSymbol = function(ev, data) {
-      if (!data || !data.symbol || (typeof data.symbol !== 'string') ) {
-        this.trigger('data-invalid_symbol');
+    this.handleSearchedInvestment = function(ev, data) {
+      if (!data || !data.investment || 
+            (typeof data.investment.symbol !== 'string')) {
+        this.trigger('data-invalid_investment');
         return;
       }
       
       var self = this;
 
-      this.createSymbol(data, {
+      this.createInvestment(data.investment, {
         success: function(resp) {
-          self.trigger('data-added_symbol', resp);
+          self.trigger('data-added_investment', resp);
         },
         error: function(resp) {
-          if (resp.status === 400) {
-            self.trigger('data-not_found_symbol');
-          } else {
-            self.trigger('data-failed_request');
-          }
+          self._handleError(resp);
         }
       });
     };
 
     /**
-     * Handle when the ui wants to delete a symbol.
+     * Handle when the ui wants to delete an investment.
      *
      * @param {Object} ev jQuery event object
      * @param {Object} data Data object, should contain symbol to be deleted.
      */
-    this.handleDeleteSymbol = function(ev, data) {
-      if (!data || !data.symbol || (typeof data.symbol !== 'string') ) {
-        this.trigger('data-invalid_symbol');
+    this.handleDeleteInvestment = function(ev, data) {
+      if (!data || !data.investment || 
+            (typeof data.investment.symbol !== 'string')) {
+        this.trigger('data-invalid_investment');
         return;
       }
       var self = this;
 
-      this.deleteSymbol(data.symbol, {
+      this.deleteInvestment(data.investment.symbol, {
         success: function(resp) {
-          self.trigger('data-deleted_symbol', resp);
+          self.trigger('data-deleted_investment', resp);
         },
         error: function(resp) {
-          var reason = {};
-          if (resp.status === 404) {
-            reason.reason = 'not found';
-            self.trigger('data-failed_symbol', reason);
-          } else {
-            self.trigger('data-failed_request');
-          }
+          self._handleError(resp);
         }
       });
-
     };
 
     /**
-     * Creates a new symbol.
+     * Creates a new investment
      *
-     * Executes a post request to /symbol with following payload:
-     *   symbol: string !required
-     *   group: string
+     * Executes a post request to /investments with following payload:
+     *  schema: investmentRequest
      *
      *  @param {Object} data The data object containing symbol and possible
      *  group
      *  @param {Object} opts Hash containing just succes and error handlers.
      */
-    this.createSymbol = function(data, opts) {
+    this.createInvestment = function(data, opts) {
       var self = this,
           opts = opts || {};
 
@@ -114,8 +97,8 @@ define(function (require) {
         url: this.attr.urlCreate,
         data: data,
         success: function(resp) {
-          var investment = self._setTimeStampOnInvestment(resp.symbol);
-          opts.success && opts.success(investment);
+          var investment = self._setTimeStampOnInvestment(resp.investment);
+          opts.success && opts.success({investment: investment});
         },
         error: function(resp) {
           opts.error && opts.error(resp);
@@ -131,7 +114,7 @@ define(function (require) {
      *  @param {String} symbolName The symbol 3-4 letter name.
      *  @param {Object} opts Hash containing just succes and error handlers.
      */
-    this.deleteSymbol = function(symbolName, opts) {
+    this.deleteInvestment = function(symbolName, opts) {
       var opts = opts || {};
 
       this.destroy({
@@ -159,19 +142,36 @@ define(function (require) {
           key,
           field;
 
-      formattedTimestamp = timestamp.getDate() + '/' + 
-        timestamp.getMonth() + '/' +
-        timestamp.getFullYear();
+      if (!investment.fields) {
+        return investment;
+      }
 
-      for (key in investment) {
-        field = investment[key];
-        if (field.val) {
-          field.updatedAt = timestamp;
-          field.updatedAtFormatted = formattedTimestamp;
+      formattedTimestamp =
+        timestamp.getMonth() + '/' +
+        timestamp.getDate() + '/' + 
+        timestamp.getFullYear();
+      
+      for (key in investment.fields) {
+        if (investment.fields.hasOwnProperty(key)) {
+          field = investment.fields[key];
+
+          if (field.val) {
+            field.updatedAt = timestamp;
+            field.updatedAtFormatted = formattedTimestamp;
+          }
         }
       }
 
       return investment;
+    };
+
+    this._handleError = function(resp) {
+      if (resp.statusCode >= 400 && resp.statusCode < 500) {
+        this.trigger('data-invalid_investment', resp);
+      }
+      if (resp.statusCode >= 500) {
+        this.trigger('data-failed_request', resp);
+      }
     };
   }
 
