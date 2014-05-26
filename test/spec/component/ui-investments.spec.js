@@ -322,6 +322,178 @@ describeComponent('component/ui-investments', function () {
      });
   });
 
+  describe('on data-updated_investments', function() {
+    it('should trigger a ui-updated_investments event on itself', function() {
+      var testInvestment,
+          expected,
+          eventSpy;
+
+      expected = [{
+        symbol: 'SYR',
+        fields: {
+          symbol: {val: 'SYR'},
+          cap: {val: 12},
+          assets: {val: 102}
+        }
+      }];
+      eventSpy = spyOnEvent(document, 'ui-updated_investments');
+      this.component.addInvestmentNoGroup(expected.fields);
+
+      $(document).trigger('data-updated_investments', {investments:
+                          expected});
+
+      expect(eventSpy.mostRecentCall.data).toEqual({investments: expected});
+     });
+    it('should update the fields to new values for one updated one', function() {
+      var testInvestment,
+          expected,
+          expectedCap,
+          expectedAssets,
+          actualCap,
+          actualAssets,
+          $testInvestment;
+
+      testInvestment = {
+        symbol: 'SYR',
+        fields: {
+          symbol: {val: 'SYR'},
+          cap: {val: 11},
+          assets: {val: 101}
+        }
+      };
+      expectedCap = 12;
+      expectedAssets = 102;
+      expected = [{
+        symbol: 'SYR',
+        fields: {
+          symbol: {val: 'SYR'},
+          cap: {val: expectedCap},
+          assets: {val: expectedAssets}
+        }
+      }];
+      this.component.addInvestmentNoGroup(testInvestment.fields);
+      $testInvestment = this.component.findInvestment(testInvestment.symbol);
+
+      actualCap = $testInvestment.find('td[name="cap"]').data('val');
+      actualAssets = $testInvestment.find('td[name="assets"]').data('val');
+      expect(actualCap).toEqual(11);
+      expect(actualAssets).toEqual(101);
+
+      $(document).trigger('data-updated_investments', {investments:
+                          expected});
+
+      $testInvestment = this.component.findInvestment(testInvestment.symbol);
+      actualCap = $testInvestment.find('td[name="cap"]').data('val');
+      actualAssets = $testInvestment.find('td[name="assets"]').data('val');
+
+      expect(actualCap).toEqual(expectedCap);
+      expect(actualAssets).toEqual(expectedAssets);
+    });
+    it('should upated the fields for multiple updated investments', function() {
+      var testInvestmentA,
+          testInvestmentB,
+          $testInvestmentA,
+          $testInvestmentB,
+          expected,
+          aCap,
+          bCap,
+          bAssets,
+          expectedACap,
+          expectedBCap,
+          expectedBAssets;
+
+      testInvestmentA = {
+        symbol: 'TNA',
+        fields: {
+          symbol: {val: 'TNA'},
+          cap: {val: 11}
+        }
+      };
+      testInvestmentB = {
+        symbol: 'TNB',
+        fields: {
+          symbol: {val: 'TNB'},
+          cap: {val: 21},
+          assets: {val: 201}
+        }
+      };
+      this.component.addInvestmentNoGroup(testInvestmentA.fields);
+      this.component.addInvestmentNoGroup(testInvestmentB.fields);
+      $testInvestmentA = this.component.findInvestment(testInvestmentA.symbol);
+      $testInvestmentB = this.component.findInvestment(testInvestmentB.symbol);
+      aCap = $testInvestmentA.children('td[name="cap"]').data('val');
+      bCap = $testInvestmentB.find('td[name="cap"]').data('val');
+      bAssets = $testInvestmentB.find('td[name="assets"]').data('val');
+
+      expect(aCap).toEqual(11);
+      expect(bCap).toEqual(21);
+      expect(bAssets).toEqual(201);
+
+      expectedACap = 12;
+      expectedBCap = 22;
+      expectedBAssets = 202;
+      expected = [
+        { symbol: 'TNA',
+          fields: {
+            symbol: {val: 'TNA'},
+            cap: {val: expectedACap}},
+        },
+        { symbol: 'TNB',
+          fields: {
+            symbol: {val: 'TNB'},
+            cap: {val: expectedBCap},
+            assets: {val: expectedBAssets}
+          }
+        }
+      ];
+
+      $(document).trigger('data-updated_investments', {investments:
+                          expected});
+
+      $testInvestmentA = this.component.findInvestment(testInvestmentA.symbol);
+      $testInvestmentB = this.component.findInvestment(testInvestmentB.symbol);
+      aCap = $testInvestmentA.children('td[name="cap"]').data('val');
+      bCap = $testInvestmentB.find('td[name="cap"]').data('val');
+      bAssets = $testInvestmentB.find('td[name="assets"]').data('val');
+
+      expect(aCap).toEqual(expectedACap);
+      expect(bCap).toEqual(expectedBCap);
+      expect(bAssets).toEqual(expectedBAssets);
+    });
+    it('should not update anything if theres no updated fields', function() {
+      var testInvestment,
+          $testInvestment,
+          expected,
+          expectedCap,
+          expectedAssets,
+          actualCap,
+          actualAssets;
+
+      expectedCap = 10;
+      expectedAssets = 101;
+      expected = {
+        symbol: 'SYR',
+        fields: {
+          symbol: {val: 'SYR'},
+          cap: {val: expectedCap},
+          assets: {val: expectedAssets}
+        }
+      };
+      this.component.addInvestmentNoGroup(expected.fields);
+
+      $(document).trigger('data-updated_investments', {investments:
+                          {symbol: 'SYR'}});
+
+      $testInvestment = this.component.findInvestment(expected.symbol);
+
+      actualCap = $testInvestment.find('td[name="cap"]').data('val');
+      actualAssets = $testInvestment.find('td[name="assets"]').data('val');
+
+      expect(expectedCap).toEqual(actualCap);
+      expect(expectedAssets).toEqual(actualAssets);
+    });
+  });
+
   describe('on data-deleted_investment', function() {
     it('should remove the lone investment from DOM if found', function() {
       var expected,

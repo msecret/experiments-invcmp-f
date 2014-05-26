@@ -39,6 +39,7 @@ define(function (require) {
 
       this.on(document, 'data-added_group', this.handleAddedGroup);
       this.on(document, 'data-added_investment', this.handleAddedInvestment);
+      this.on(document, 'data-updated_investments', this.handleUpdatedInvestments);
       this.on(document, 'data-deleted_investment', this.handleDeletedInvestment);
       this.on(this.attr.selectorEntryDelete, 'click', this.handleEntryDelete);
 
@@ -143,6 +144,22 @@ define(function (require) {
     };
 
     /**
+     * Handler for when the data changes and investments are updated.
+     *
+     * @param {Object} ev The jQuery event object.
+     * @param {Object} data The data passed, should contain investments to
+     * update.
+     */
+    this.handleUpdatedInvestments = function(ev, data) {
+      if (!data && !data.investments) {
+        return;
+      }
+
+      this.updateInvestments(data.investments);
+      this.trigger('ui-updated_investments', data);
+    };
+
+    /**
      * Handle an investment deleted in data.
      *
      * @param {Object} ev The jQuery event object
@@ -185,7 +202,7 @@ define(function (require) {
           html;
 
       $groupSelector = this.findGroup(group.name);
-      html = this.renderTemplate(this.attr.tmpltextInvestmentTr, investment);
+      html = this.renderInvestment(investment);
 
       $groupSelector.after(html);
     };
@@ -198,13 +215,85 @@ define(function (require) {
     this.addInvestmentNoGroup = function(investment) {
       var html;
 
-      html = this.renderTemplate(this.attr.tmpltextInvestmentTr, investment);
+      html = this.renderInvestment(investment);
 
       this.select('selectorList').prepend(html);
     };
 
     /**
-     * Delete a symbol from the list DOM
+     * Renders a single investment with data passed in.
+     *
+     * @param {Object} investment Investment to render
+     *    schema: investment
+     *
+     * @return {Object} html The html for the rendered template
+     */
+    this.renderInvestment = function(investment) {
+      var html;
+
+      html = this.renderTemplate(this.attr.tmpltextInvestmentTr, investment);
+
+      return html;
+    };
+
+    /**
+     * Get the current data defined on the investment.
+     *
+     * @param {Object} investment Investment, schema: investment.
+     * @return {Object} data The altered investment data.
+     */
+    this.getInvestmentData = function(investment) {
+      var data = {},
+          $investment;
+
+      $investment = this.findInvestment(investment.symbol);
+      $investment.find(this.attr.selectorEntryField).each(function() {
+        var key = $(this).attr('name'),
+            val = $(this).data(key);
+
+            data[key] = val;
+      });
+
+      return data;
+    };
+
+    /**
+     * Update a single investment's data in the DOM.
+     *
+     * @param {Object} investment Investment, schema: investment.
+     */
+    this.updateInvestment = function(investment) {
+      var $investment,
+          newData = {},
+          html;
+
+      $investment = this.findInvestment(investment.symbol);
+      html = this.renderInvestment(investment.fields);
+
+      $investment.replaceWith(html);
+    };
+    
+    /**
+     * Update multiple investments data in the DOM.
+     *
+     * @param {Array} investments Array of investment(s).
+     */
+    this.updateInvestments = function(investments) {
+      var i,
+          ilen,
+          investment;
+
+      for (i = 0, ilen = investments.length; i < ilen; i++) {
+        investment = investments[i];
+        if (!investment.fields) {
+          continue;
+        }
+        investment = this.updateInvestment(investment);
+      }
+    };
+
+    /**
+     * Delete an investment from the list DOM
      *
      * @param {Object} symbol The symbol data object.
      */
