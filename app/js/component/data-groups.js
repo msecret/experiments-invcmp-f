@@ -56,21 +56,32 @@ define(function (require) {
      * Adds a group to the list of groups. Checks that the group is not empty
      * and the  group is not a duplicate.
      *
-     * @param {String} group The group to add.
+     * @param {Object} group The group to add.
      */
     this.addGroup = function(group) {
+      var groupName;
       if (!group) {
-        this.trigger('data-invalid_add_group', {reason: 'empty'});
+        this.trigger('data-invalid_group', 
+                     {message: 'empty group field'});
         return;
       }
-      
+      if (!group.name) {
+        this.trigger('data-invalid_group', 
+                     {message: 'empty group name field',
+                       group: group});
+        return;
+      }
       if ($.inArray(group, this.groups) !== -1) {
-        this.trigger('data-invalid_add_group', {reason: 'duplicate'});
+        this.trigger('data-invalid_group', 
+                     {
+                       group: group,
+                       message: 'duplicate group'
+                     });
         return;
       }
 
       this.groups.push(group);
-      this.trigger('data-added_group', {group: {name: group}});
+      this.trigger('data-added_group', {group: group});
       this.trigger('data-loaded_group');
     };
 

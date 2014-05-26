@@ -23,33 +23,48 @@ describeComponent('component/data-groups', function () {
   });
 
   describe('on ui-add_group', function() {
+    var testGroup;
+
     beforeEach(function() {
       this.component.groups = []; // Clear the components memory of groups.
+      testGroup = {
+        name: 'TST'
+      };
     });
-    it('should trigger data-invalid_add_group with reason: empty if group in '+
-       'data is falsy', function() {
-      var eventSpy;
+    it('should trigger data-invalid_group with message: empty name if group in '+
+       'data doesn\'t have a name', function() {
+      var eventSpy,
+          testGroup,
+          expected;
+          
+      testGroup = {};
+      expected = {
+        message: 'empty group name field',
+        group: testGroup 
+      };
+      eventSpy = spyOnEvent(document, 'data-invalid_group');
 
-      eventSpy = spyOnEvent(document, 'data-invalid_add_group');
-
-      this.component.trigger('ui-add_group', {group: ''});
+      this.component.trigger('ui-add_group', {group: testGroup});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      expect(eventSpy.mostRecentCall.data).toEqual({reason: 'empty'});
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
     });
-    it('should trigger data-invalid_add_group with reason: duplicate if the '+
+    it('should trigger data-invalid_add_group with message: duplicate if the '+
        'group is a duplicate', function() {
       var eventSpy,
-          testGroup;
+          expected;
 
-      eventSpy = spyOnEvent(document, 'data-invalid_add_group');
-      testGroup = 'testGroup1';
+      expected = {
+        message: 'duplicate group',
+        group: testGroup 
+      };
+      eventSpy = spyOnEvent(document, 'data-invalid_group');
       this.component.groups.push(testGroup);
 
       this.component.trigger('ui-add_group', {group: testGroup});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      expect(eventSpy.mostRecentCall.data).toEqual({reason: 'duplicate'});
+      expect(eventSpy.mostRecentCall.data).toEqual(expected);
     });
     it('should trigger data-loading_group', function() {
       var eventSpy;
@@ -64,19 +79,20 @@ describeComponent('component/data-groups', function () {
       var eventSpy,
           expected = 'newGroup';
 
+      expected = {name: 'TestGroup1'};
       eventSpy = spyOnEvent(document, 'data-added_group');
 
       this.component.trigger('ui-add_group', {group: expected});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      expect(eventSpy.mostRecentCall.data).toEqual({group: {name: expected}});
+      expect(eventSpy.mostRecentCall.data).toEqual({group: expected});
     });
     it('should trigger data-loaded_group with new group on success', function() {
       var eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-loaded_group');
 
-      this.component.trigger('ui-add_group', {group: 'newGroup'});
+      this.component.trigger('ui-add_group', {group: testGroup});
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
