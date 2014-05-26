@@ -32,7 +32,7 @@ define(function (require) {
       this.on(document, 'data-wanted_new_group', this.handleWantedNewGroup);
       this.on(document, 'data-loading_group', this.loadingStart);
       this.on(document, 'data-added_group', this.handleAddedGroup);
-      this.on(document, 'data-invalid_add_group', this.handleInvalidGroup);
+      this.on(document, 'data-invalid_group', this.handleInvalidGroup);
       this.on('submit', this.handleSubmit);
       this.on(this.attr.selectorCancelButton, 'click', this.handleCancel);
     });
@@ -93,9 +93,9 @@ define(function (require) {
     this.handleInvalidGroup = function(ev, data) {
       this.clearForm();
       this.select('selectorGroupInput').toggleClass('warning', true);
-      if (data && data.reason === 'empty') {
+      if (data && data.message === 'empty') {
         this.select('selectorWarningEmptyGroup').show();
-      } else if (data && data.reason === 'duplicate') {
+      } else if (data && data.message === 'duplicate') {
         this.select('selectorWarningDuplicateGroup').show();
       }
     };

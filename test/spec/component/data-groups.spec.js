@@ -39,7 +39,7 @@ describeComponent('component/data-groups', function () {
           
       testGroup = {};
       expected = {
-        message: 'empty group name field',
+        message: 'empty',
         group: testGroup 
       };
       eventSpy = spyOnEvent(document, 'data-invalid_group');
@@ -55,7 +55,7 @@ describeComponent('component/data-groups', function () {
           expected;
 
       expected = {
-        message: 'duplicate group',
+        message: 'duplicate',
         group: testGroup 
       };
       eventSpy = spyOnEvent(document, 'data-invalid_group');

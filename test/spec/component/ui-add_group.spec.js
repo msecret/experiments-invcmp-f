@@ -25,7 +25,7 @@ describeComponent('component/ui-add_group', function () {
     it('should clear itself of any previous input', function() {
       var actual;
       
-      this.component.select('selectorGroupInput').val('poop');
+      this.component.select('selectorGroupInput').val('data');
       $(document).trigger('data-wanted_new_group');
 
       actual = this.$node.select('selectorGroupInput').val();
@@ -47,7 +47,7 @@ describeComponent('component/ui-add_group', function () {
     it('should unhide itself', function() {
       this.$node.hide(); // Ensure its hidden as in index.html
 
-      this.$node.trigger('ui-activate_group_add', 'pen15');
+      this.$node.trigger('ui-activate_group_add', 'group');
 
       expect(this.$node.is(':hidden')).toBeFalsy();
     });
@@ -99,7 +99,7 @@ describeComponent('component/ui-add_group', function () {
 
       $groupInput.val('something');
       
-      $(document).trigger('data-invalid_add_group', {});
+      $(document).trigger('data-invalid_group', {});
 
       expect($groupInput.val()).toEqual('');
     });
@@ -108,28 +108,28 @@ describeComponent('component/ui-add_group', function () {
 
       $groupInput.toggleClass('warning', false); // Ensure not present.
       
-      $(document).trigger('data-invalid_add_group', {reason: 'duplicate'});
+      $(document).trigger('data-invalid_group', {message: 'duplicate'});
 
       expect($groupInput.hasClass('warning')).toBeTruthy();
     });
-    it('should show the empty warning message if the reason: empty', function() {
+    it('should show the empty warning message if the message: empty', function() {
       var $groupWarning = this.$node.select('selectorWarningEmptyGroup');
 
       this.$node.show();
       $groupWarning.toggleClass('hidden', true);
 
-      $(document).trigger('data-invalid_add_group', {reason: 'duplicate'});
+      $(document).trigger('data-invalid_group', {message: 'duplicate'});
 
       expect($groupWarning.is(':hidden')).toBeFalsy();
     });
-    it('should show the duplicate warning message if the reason: duplicate',
+    it('should show the duplicate warning message if the message: duplicate',
        function() {
       var $groupWarning = this.component.select('selectorWarningDuplicateGroup');
 
       this.$node.show();
       $groupWarning.hide();
 
-      $(document).trigger('data-invalid_add_group', {reason: 'duplicate'});
+      $(document).trigger('data-invalid_group', {message: 'duplicate'});
 
       expect($groupWarning.is(':hidden')).toBeFalsy();
     });

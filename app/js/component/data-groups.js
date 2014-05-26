@@ -60,14 +60,9 @@ define(function (require) {
      */
     this.addGroup = function(group) {
       var groupName;
-      if (!group) {
+      if (!group || !group.name) {
         this.trigger('data-invalid_group', 
-                     {message: 'empty group field'});
-        return;
-      }
-      if (!group.name) {
-        this.trigger('data-invalid_group', 
-                     {message: 'empty group name field',
+                     {message: 'empty',
                        group: group});
         return;
       }
@@ -75,7 +70,7 @@ define(function (require) {
         this.trigger('data-invalid_group', 
                      {
                        group: group,
-                       message: 'duplicate group'
+                       message: 'duplicate'
                      });
         return;
       }
