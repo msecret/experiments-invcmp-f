@@ -31,15 +31,15 @@ define(function (require) {
       selectorEntryUpdate: '.js-investmentListEntryControls-Update', 
       numCols: 18,
       tmpltextGroupTr: tmpltextGroupTr,
-      tmpltextSymbolTr: tmpltextSymbolTr
+      tmpltextInvestmentTr: tmpltextSymbolTr
     });
 
     this.after('initialize', function () {
       var self = this;
 
       this.on(document, 'data-added_group', this.handleAddedGroup);
-      this.on(document, 'data-added_symbol', this.handleAddedSymbol);
-      this.on(document, 'data-deleted_symbol', this.handleDeletedSymbol);
+      this.on(document, 'data-added_investment', this.handleAddedInvestment);
+      this.on(document, 'data-deleted_investment', this.handleDeletedInvestment);
       this.on(this.attr.selectorEntryDelete, 'click', this.handleEntryDelete);
 
       // Have to attach to $node because flight on doesn't support non-present
@@ -54,7 +54,6 @@ define(function (require) {
         self.handleEntryFieldUpdate(ev, self);
       });
 
-      this.addSymbolNoGroup({symbol: 'SYN'});
     });
 
     /**
@@ -62,8 +61,8 @@ define(function (require) {
      *
      * @param {String} sym The string of the symbol to find
      */
-    this.findSymbol = function(sym) {
-      return this.select('selectorList').find('tr[data-symbol="'+ sym +'"]');
+    this.findInvestment = function(symbal) {
+      return this.select('selectorList').find('tr[data-symbol="'+ symbal +'"]');
     };
 
     /**
@@ -87,21 +86,22 @@ define(function (require) {
     /**
      * Handle added symbol events
      */
-    this.handleAddedSymbol = function(ev, data) {
+    this.handleAddedInvestment = function(ev, data) {
       var investment;
 
-      if (data.symbol && data.symbol.symbol) {
-        investment = data.symbol;
+      if (data.investment && data.investment.symbol &&
+          data.investment.fields) {
+        investment = data.investment;
 
         if (investment.group) {
-          this.addSymbolToGroup(investment, 
+          this.addInvestmentToGroup(investment.fields, 
                                 investment.group);
         }
         else {
-          this.addSymbolNoGroup(investment);
+          this.addInvestmentNoGroup(investment.fields);
         }
 
-        this.trigger('ui-added_symbol', data);
+        this.trigger('ui-added_investment', data.investment);
       }
     };
 
@@ -115,7 +115,8 @@ define(function (require) {
       ev.preventDefault();
       var $target = $(ev.currentTarget),
           symbol = $target.data('symbol');
-      self.$node.trigger('ui-delete_symbol', {symbol: symbol});
+      self.$node.trigger('ui-delete_investment', {investment: 
+                          {symbol: symbol}});
     };
 
     /**
@@ -128,7 +129,8 @@ define(function (require) {
       ev.preventDefault();
       var $target = $(ev.currentTarget),
           symbol = $target.data('symbol');
-      self.$node.trigger('ui-update_symbol', {symbol: symbol});
+      self.$node.trigger('ui-update_investment', {investment: 
+                          {symbol: symbol}});
     };
 
     /**
@@ -143,24 +145,25 @@ define(function (require) {
           symbol = $target.parent().data('symbol'),
           fieldName = $target.attr('name');
 
-      this.trigger('ui-edit_symbol_field', {
+      this.trigger('ui-edit_investment_field', {investment: {
         symbol: symbol,
         field: fieldName
-      });
+      }});
     };
 
     /**
-     * Handle a symbol deleted in data.
+     * Handle an investment deleted in data.
      *
      * @param {Object} ev The jQuery event object
      * @param {Object} data The data passed, should contain symbol deleted.
      */
-    this.handleDeletedSymbol = function(ev, data) {
-      if (!data.symbol || !data.symbol.symbol) {
+    this.handleDeletedInvestment = function(ev, data) {
+      if (!data.investment || !data.investment.symbol) {
         return;
       }
 
-      this.deleteSymbol(data.symbol);
+      this.deleteInvestment(data.investment.symbol);
+      this.trigger('ui-deleted_investment', {investment: data.investment});
     };
 
     /**
@@ -183,42 +186,30 @@ define(function (require) {
     /**
      * Add the symbol under its specified group in the DOM.
      *
-     * @param {Object} symbol The symbol object to add.
+     * @param {Object} investment The investment object to add.
      * @param {Object} group The group object.
      */
-    this.addSymbolToGroup = function(symbol, group) {
+    this.addInvestmentToGroup = function(investment, group) {
       var $groupSelector,
           html;
 
       $groupSelector = this.findGroup(group.name);
-      html = this.renderTemplate(this.attr.tmpltextSymbolTr, symbol);
+      html = this.renderTemplate(this.attr.tmpltextInvestmentTr, investment);
 
       $groupSelector.after(html);
     };
     
     /**
-     * Add the symbol under no group.
+     * Add the investment under no group.
      *
-     * @param {Object} symbol The symbol object to add.
+     * @param {Object} investment The investment object to add.
      */
-    this.addSymbolNoGroup = function(symbol) {
+    this.addInvestmentNoGroup = function(investment) {
       var html;
 
-      
-      html = this.renderTemplate(this.attr.tmpltextSymbolTr, symbol);
+      html = this.renderTemplate(this.attr.tmpltextInvestmentTr, investment);
 
       this.select('selectorList').prepend(html);
-    };
-
-    this._addSymbol = function(symbol, $anchor) {
-      var html;
-
-      html = this.renderTemplate(this.attr.tmpltextSymbolTr, symbol);
-
-      $anchor.after(html);
-      if (!$anchor) {
-
-      }
     };
 
     /**
@@ -226,13 +217,13 @@ define(function (require) {
      *
      * @param {Object} symbol The symbol data object.
      */
-    this.deleteSymbol = function(symbol) {
+    this.deleteInvestment = function(symbol) {
       var $symbol;
 
-      $symbol = this.findSymbol(symbol.symbol);
+      $symbol = this.findInvestment(symbol);
       if ($symbol.length) {
         $symbol.remove();
-        this.trigger('ui-deleted_symbol', symbol);
+        this.trigger('ui-deleted_investment', symbol);
       }
     };
 
