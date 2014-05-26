@@ -42,18 +42,9 @@ define(function (require) {
       this.on(document, 'data-deleted_investment', this.handleDeletedInvestment);
       this.on(this.attr.selectorEntryDelete, 'click', this.handleEntryDelete);
 
-      // Have to attach to $node because flight on doesn't support non-present
-      // handlers :(.
-      this.$node.on('click', this.attr.selectorEntryDelete, function(ev) {
-        self.handleEntryDelete(ev, self);
-      });
-      this.$node.on('click', this.attr.selectorEntryUpdate, function(ev) {
-        self.handleEntryUpdate(ev, self);
-      });
-      this.$node.on('dblclick', this.attr.selectorEntryField, function(ev) {
-        self.handleEntryFieldUpdate(ev, self);
-      });
-
+      this.on('click', {'selectorEntryDelete': this.handleEntryDelete});
+      this.on('click', {'selectorEntryUpdate': this.handleEntryUpdate});
+      this.on('dblclick', {'selectorEntryField': this.handleEntryFieldUpdate});
     });
 
     /**
@@ -108,14 +99,14 @@ define(function (require) {
     /**
      * Handle the delete button for an entry being clicked
      *
-     * @param {Object} ev The jQuery event object
-     * @param {Object} self The this defined in this class, currently a hack.
+     * @param {Object} ev The jQuery event object.
+     * @param {Object} el The html element being clicked.
      */
-    this.handleEntryDelete = function(ev, self) {
+    this.handleEntryDelete = function(ev, el) {
       ev.preventDefault();
-      var $target = $(ev.currentTarget),
+      var $target = $(ev.target).parents(this.attr.selectorEntry),
           symbol = $target.data('symbol');
-      self.$node.trigger('ui-delete_investment', {investment: 
+      this.trigger('ui-delete_investment', {investment: 
                           {symbol: symbol}});
     };
 
@@ -123,13 +114,13 @@ define(function (require) {
      * Handle the update button for an entry being clicked
      *
      * @param {Object} ev The jQuery event object
-     * @param {Object} self The this defined in this class, currently a hack.
+     * @param {Object} el The html element being clicked.
      */
-    this.handleEntryUpdate = function(ev, self) {
+    this.handleEntryUpdate = function(ev, el) {
       ev.preventDefault();
-      var $target = $(ev.currentTarget),
+      var $target = $(ev.target).parents(this.attr.selectorEntry),
           symbol = $target.data('symbol');
-      self.$node.trigger('ui-update_investment', {investment: 
+      this.trigger('ui-update_investment', {investment: 
                           {symbol: symbol}});
     };
 
@@ -137,12 +128,12 @@ define(function (require) {
      * Handles when an entry's field is clicked to edit the field.
      *
      * @param {Object} ev The jQuery event object
-     * @param {Object} self The this defined in this class, currently a hack.
+     * @param {Object} el The html element being clicked.
      */
-    this.handleEntryFieldUpdate = function(ev, self) {
+    this.handleEntryFieldUpdate = function(ev, el) {
       ev.preventDefault();
-      var $target = $(ev.currentTarget),
-          symbol = $target.parent().data('symbol'),
+      var $target = $(ev.target),
+          symbol = $target.parents(this.attr.selectorEntry).data('symbol'),
           fieldName = $target.attr('name');
 
       this.trigger('ui-edit_investment_field', {investment: {
