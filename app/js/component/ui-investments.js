@@ -41,6 +41,7 @@ define(function (require) {
       this.on(document, 'data-added_investment', this.handleAddedInvestment);
       this.on(document, 'data-updated_investments', this.handleUpdatedInvestments);
       this.on(document, 'data-deleted_investment', this.handleDeletedInvestment);
+      this.on(document, 'data-deleted_group', this.handleDeletedGroup);
       this.on(this.attr.selectorEntryDelete, 'click', this.handleEntryDelete);
 
       this.on('click', {'selectorEntryDelete': this.handleEntryDelete});
@@ -172,6 +173,18 @@ define(function (require) {
 
       this.deleteInvestment(data.investment.symbol);
       this.trigger('ui-deleted_investment', {investment: data.investment});
+    };
+
+    /**
+     *
+     */
+    this.handleDeletedGroup = function(ev, data) {
+      if (!data || !data.group || !data.group.name) {
+        return;
+      }
+
+      this.deleteGroup(data.group);
+      this.trigger('ui-deleted_group');
     };
 
     /**
@@ -307,5 +320,31 @@ define(function (require) {
       }
     };
 
+    /**
+     * Deletes a group from the DOM and moves its associated investments to
+     * the no group zone at the top.
+     *
+     * @param {Object} group The group to delete, !schema group.json
+     */
+    this.deleteGroup = function(group) {
+      var $row,
+          $groupToDelete,
+          investmentsSave = [],
+          i;
+
+      $groupToDelete = this.findGroup(group.name);
+      // This is kinda cool but is there a way to select this?
+      for ($row = $groupToDelete.next('tr'); 
+           $row.length && $row.hasClass(this.attr.selectorEntry);
+           $row = $row.next('tr')) {
+        $row.detach();
+        investmentsSave.push($row);
+      }
+      $groupToDelete.remove();
+
+      $.each(investmentsSave, function($investment) {
+        this.select('selectorList').prepend($investment);
+      });
+    };
   }
 });

@@ -565,4 +565,74 @@ describeComponent('component/ui-investments', function () {
       expect(eventSpy.mostRecentCall.data).toEqual({investment: expected});
     });
   });
+
+  describe('on data-deleted_group', function() {
+    it('should not remove any group if group name doesn\t exist',
+       function() {
+      var deadGroup,
+          testGroup,
+          actual;
+
+      deadGroup = {};
+      testGroup = {name: 'TestGroup A'};
+      this.component.addGroup(testGroup);
+      this.component.addInvestmentToGroup(testInvestment.fields, testGroup);
+
+      actual = this.component.findInvestment(testInvestment.symbol);
+      expect(actual.length).toEqual(1);
+
+      $(document).trigger('data-deleted_group', {group: deadGroup});
+
+      actual = this.component.findInvestment(testInvestment.symbol);
+
+      expect(actual.length).toEqual(1);
+     });
+    it('should not remove any group from the DOM if group doesn\'t exist',
+       function() {
+      var deadGroup,
+          testGroup,
+          actual;
+
+      deadGroup = {name: 'Non-existant'};
+      testGroup = {name: 'TestGroup A'};
+      this.component.addGroup(testGroup);
+      this.component.addInvestmentToGroup(testInvestment.fields, testGroup);
+
+      actual = this.component.findInvestment(testInvestment.symbol);
+      expect(actual.length).toEqual(1);
+
+      $(document).trigger('data-deleted_group', {group: deadGroup});
+
+      actual = this.component.findInvestment(testInvestment.symbol);
+
+      expect(actual.length).toEqual(1);
+     });
+     it('should remove the group from the DOM, placing the investments in clear',
+        function() {
+      var expectedGroup,
+          actual,
+          expectedInvestment;
+
+      expectedGroup = {name: 'tGroupB'};
+      expectedInvestment = testInvestment;
+      expectedInvestment.group = expectedGroup;
+
+      this.component.addGroup(expectedGroup);
+      this.component.addInvestmentToGroup(expectedInvestment.fields, 
+                                          expectedGroup);
+
+      actual = this.component.findGroup(expectedGroup.name);
+      expect(actual.length).toEqual(1);
+      // Ensure the first thing below the group is the correct investment.
+      expect(actual.next().data('symbol')).toEqual(expectedInvestment.symbol);
+
+      $(document).trigger('data-deleted_group', {group: expectedGroup});
+
+      actual = this.component.findGroup(expectedGroup.name);
+      expect(actual.length).toEqual(0);
+      actual = this.component.select('selectorList').find('tr').first();
+      // Ensure the investment gets moved to the top of the list.
+      expect(actual.data('symbol')).toEqual(expectedInvestment.symbol);
+    });
+  });
 });
