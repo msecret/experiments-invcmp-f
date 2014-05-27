@@ -247,7 +247,69 @@ describeComponent('component/data-investments', function () {
     });
   });
 
-  describe('on ui-delete_symbol', function() {
+  describe('on ui-get_investment', function() {
+    var server,
+        clock;
+
+    beforeEach(function() {
+      server = sinon.fakeServer.create();
+      clock = sinon.useFakeTimers(0);
+    });
+
+    afterEach(function() {
+      server.restore();
+      clock.restore();
+    });
+
+    it('should not trigger an event if investment or investment.symbol missing',
+       function() {
+      var eventSpy,
+          badInvestment;
+
+      badInvestment = {
+        group: {name: 'OK'}
+      };
+      this.$node.trigger('ui-get_investment',
+                         {investment: badInvestment});
+
+      eventSpy = spyOnEvent(document, 'data-added_investment');
+
+      expect(eventSpy).not.toHaveBeenTriggeredOn(document);
+    });
+    it('should trigger a data-got_investment with investment data on document',
+        function() {
+      var testInvestmentRequest,
+          expected,
+          eventSpy;
+
+      testInvestmentRequest = {
+        symbol: 'TNZ',
+        group: {name: 'TGroup1'}
+      };
+      expected = {
+        symbol: 'TNZ',
+        group: {name: 'TGroup1'},
+        fields: {
+          symbol: {val: 'TNZ'}
+        }
+      };
+
+      eventSpy = spyOnEvent(document, 'data-got_investment');
+      server.respondWith('GET', '/investments/'+ testInvestmentRequest.symbol,
+                              [200, { 'Content-Type': 'application/json' },
+                               JSON.stringify({investment: expected})]);
+
+      this.$node.trigger('ui-get_investment', 
+                        {investment: testInvestmentRequest});
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+      expect(eventSpy.mostRecentCall.data.investment.symbol).toEqual(
+        expected.symbol);
+    });
+  });
+
+  describe('on ui-delete_investment', function() {
     var server;
 
     beforeEach(function() {

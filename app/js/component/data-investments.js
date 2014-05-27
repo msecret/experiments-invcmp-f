@@ -22,11 +22,13 @@ define(function (require) {
   function dataInvestments() {
     this.defaultAttrs({
       urlCreate: '/investments',
+      urlGet: '/investments/',
       urlDelete: '/investments/'
     });
 
     this.after('initialize', function () {
       this.on('ui-add_investment', this.handleSearchedInvestment);
+      this.on('ui-get_investment', this.handleGetInvestment);
       this.on('ui-delete_investment', this.handleDeleteInvestment);
     });
 
@@ -51,6 +53,24 @@ define(function (require) {
         },
         error: function(resp) {
           self._handleError(resp);
+        }
+      });
+    };
+
+    this.handleGetInvestment = function(ev, data) {
+      if (!data || !data.investment || 
+            (typeof data.investment.symbol !== 'string')) {
+        this.trigger('data-invalid_investment');
+        return;
+      }
+      var self = this;
+
+      this.getInvestment(data.investment, {
+        success: function(resp) {
+          self.trigger('data-got_investment', resp);
+        },
+        error: function(resp) {
+          self._handlerError(resp);
         }
       });
     };
@@ -104,6 +124,30 @@ define(function (require) {
           opts.error && opts.error(resp);
         }
       });
+    };
+
+    /**
+     * Get an investment.
+     * 
+     * @param {Object} data Investment data
+     *   !schema investment request.
+     */
+    this.getInvestment = function(data, opts) {
+      var self = this,
+          opts = opts || {};
+
+      console.log(data);
+      this.get({
+        url: this.attr.urlGet + data.symbol,
+        success: function(resp) {
+          var investment = self._setTimeStampOnInvestment(resp.investment);
+          opts.success && opts.success({investment: investment});
+        },
+        error: function(resp) {
+          opts.error && opts.error(resp);
+        }
+      });
+
     };
 
     /**
