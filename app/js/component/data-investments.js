@@ -23,12 +23,14 @@ define(function (require) {
     this.defaultAttrs({
       urlCreate: '/investments',
       urlGet: '/investments/',
+      urlUpdate: '/investments/',
       urlDelete: '/investments/'
     });
 
     this.after('initialize', function () {
       this.on('ui-add_investment', this.handleSearchedInvestment);
       this.on('ui-get_investment', this.handleGetInvestment);
+      this.on('ui-update_investment', this.handleUpdateInvestment);
       this.on('ui-delete_investment', this.handleDeleteInvestment);
     });
 
@@ -57,6 +59,12 @@ define(function (require) {
       });
     };
 
+    /**
+     * Will  handle whenver an attempt to get an investment.
+     *
+     * @param {Object} ev Jquery event object.
+     * @param {Object} data The data payload with symbol to get.
+     */
     this.handleGetInvestment = function(ev, data) {
       if (!data || !data.investment || 
             (typeof data.investment.symbol !== 'string')) {
@@ -71,6 +79,31 @@ define(function (require) {
         },
         error: function(resp) {
           self._handlerError(resp);
+        }
+      });
+    };
+
+    /**
+     * Will  handle whenver an attempt to update an investment.
+     *
+     * @param {Object} ev Jquery event object.
+     * @param {Object} data The data payload to update investment with.
+     */
+    this.handleUpdateInvestment = function(ev, data) {
+      if (!data || !data.investment || 
+            (typeof data.investment.symbol !== 'string')) {
+        this.trigger('data-invalid_investment');
+        return;
+      }
+      
+      var self = this;
+
+      this.updateInvestment(data.investment, {
+        success: function(resp) {
+          self.trigger('data-updated_investment', resp);
+        },
+        error: function(resp) {
+          self._handleError(resp);
         }
       });
     };
@@ -105,17 +138,45 @@ define(function (require) {
      * Executes a post request to /investments with following payload:
      *  schema: investmentRequest
      *
-     *  @param {Object} data The data object containing symbol and possible
-     *  group
+     *  @param {Object} investment The data object containing symbol and possible
+     *    group
+     *    !schema investmentRequest.json
      *  @param {Object} opts Hash containing just succes and error handlers.
      */
-    this.createInvestment = function(data, opts) {
+    this.createInvestment = function(investment, opts) {
       var self = this,
           opts = opts || {};
 
       this.post({
         url: this.attr.urlCreate,
-        data: data,
+        data: investment,
+        success: function(resp) {
+          var investment = self._setTimeStampOnInvestment(resp.investment);
+          opts.success && opts.success({investment: investment});
+        },
+        error: function(resp) {
+          opts.error && opts.error(resp);
+        }
+      });
+    };
+
+    /**
+     * Updates a existing investment
+     *
+     * Executes a pust request to /investments/{sym} with following payload:
+     *  schema: investment
+     *
+     *  @param {Object} investment The data object investment
+     *    !schema investment.json
+     *  @param {Object} opts Hash containing just success and error handlers.
+     */
+    this.updateInvestment = function(investment, opts) {
+      var self = this,
+          opts = opts || {};
+
+      this.put({
+        url: this.attr.urlUpdate + investment.symbol,
+        data: investment,
         success: function(resp) {
           var investment = self._setTimeStampOnInvestment(resp.investment);
           opts.success && opts.success({investment: investment});
@@ -136,7 +197,6 @@ define(function (require) {
       var self = this,
           opts = opts || {};
 
-      console.log(data);
       this.get({
         url: this.attr.urlGet + data.symbol,
         success: function(resp) {

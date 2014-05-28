@@ -309,6 +309,137 @@ describeComponent('component/data-investments', function () {
     });
   });
 
+  describe('on ui-update_investment', function() {
+    var server,
+        clock;
+
+    beforeEach(function() {
+      server = sinon.fakeServer.create();
+      clock = sinon.useFakeTimers(0);
+    });
+
+    afterEach(function() {
+      server.restore();
+      clock.restore();
+    });
+
+    it('should not trigger an event if missing data', 
+       function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-invalid_investment');
+      this.$node.trigger('ui-update_investment', {investment: {}});
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('shoud not trigger anything if there is no symbol in data', function() {
+      var eventSpy;
+
+      eventSpy = spyOnEvent(document, 'data-invalid_investment');
+      this.$node.trigger('ui-update_investment', {investment: {group: {}}});
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+    it('should make a PUT ajax call to /investments/{sym} if symbol string', 
+       function() {
+      this.$node.trigger('ui-update_investment', {investment: 
+                                                   testInvestment});
+
+      expect(server.requests[0].url).toEqual(
+        '/investments/'+ testInvestment.symbol);
+      expect(server.requests[0].method).toEqual('POST');
+    });
+    it('should trigger data-updated_investment if the request succeeds',
+       function() {
+      var expected,
+          eventSpy;
+
+      expected = {
+        symbol: 'TNT',
+        group: {name: 'TGroup1'},
+        fields: {
+          symbol: {val: 'TNT'}
+        }
+
+      };
+      eventSpy = spyOnEvent(document, 'data-updated_investment');
+      server.respondWith('POST', '/investments/'+ expected.symbol,
+                              [200, { 'Content-Type': 'application/json' },
+                               JSON.stringify({investment: expected})]);
+
+      this.$node.trigger('ui-update_investment', 
+                        {investment: expected});
+      server.respond();
+
+      expect(eventSpy.mostRecentCall.data.investment.symbol).toEqual(
+        expected.symbol);
+    });
+    it('should update the updatedAt timestamp on on fields', function() {
+      var testInvestment,
+          expected,
+          eventSpy,
+          actual;
+
+      clock.tick(50);
+      expected = new Date();
+      testInvestment = {
+        symbol: 'MNT',
+        fields: {
+          symbol: {val: 'MNT'},
+          cap: {val: 100}
+        }
+      };
+
+      eventSpy = spyOnEvent(document, 'data-updated_investment');
+      server.respondWith('POST', '/investments/'+ testInvestment.symbol,
+                              [200, { 'Content-Type': 'application/json' },
+                               JSON.stringify({investment: testInvestment})]);
+
+      this.$node.trigger('ui-update_investment', 
+                        {investment: testInvestment});
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+      actual = eventSpy.mostRecentCall.data.investment; 
+      expect(actual.fields.cap.updatedAt).toEqual(expected);
+    });
+    it('should update the updatedAtFormatted timestamp on on fields', function() {
+      var testInvestment,
+          expected,
+          eventSpy,
+          newDate,
+          actual;
+
+      clock.tick(50);
+      newDate = new Date();
+      expected =
+        newDate.getMonth() + '/' +
+        newDate.getDate() + '/' + 
+        newDate.getFullYear();
+      testInvestment = {
+        symbol: 'MNT',
+        fields: {
+          symbol: {val: 'MNT'},
+          cap: {val: 100}
+        }
+      };
+
+      eventSpy = spyOnEvent(document, 'data-updated_investment');
+      server.respondWith('POST', '/investments/' + testInvestment.symbol,
+                              [200, { 'Content-Type': 'application/json' },
+                               JSON.stringify({investment: testInvestment})]);
+
+      this.$node.trigger('ui-update_investment', 
+                        {investment: testInvestment});
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+      actual = eventSpy.mostRecentCall.data.investment; 
+
+      expect(actual.fields.cap.updatedAtFormatted).toEqual(expected);
+    });
+  });
+
   describe('on ui-delete_investment', function() {
     var server;
 
