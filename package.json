@@ -1,6 +1,6 @@
 {
   "name": "invcmp",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "devDependencies": {
     "generator-flight": "~0.7.2",
     "gulp": "~3.4.0",

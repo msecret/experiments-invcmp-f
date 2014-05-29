@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/msecret/experiments-invcmp-f.svg?branch=master)](https://travis-ci.org/msecret/experiments-invcmp-f)
 
-version 0.0.3
+version 0.0.4
 
 ## About
 An experimental UI for a simple spreadsheet program for comparing various 
