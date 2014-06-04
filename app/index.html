@@ -20,7 +20,7 @@
     </div>
 
     <div class="pure-g">
-      <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+      <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-8">
         <!-- start :: add investment form -->
         <form class="js-addInvestment pure-form" name="addInvestment">
           <fieldset>
@@ -41,7 +41,7 @@
     <div class="pure-g">
       <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
       <!-- start :: add group form -->
-      <form class="js-addGroup pure-form" name="addGroup">
+      <form class="js-addGroup pure-form msecret-hidden" name="addGroup">
         <fieldset>
           <input type="text" class="js-groupInput" placeholder="group name" />
           <p class="js-warningEmptyGroup warning msecret-hidden">The group field is
@@ -62,26 +62,28 @@
     <div class="pure-g">
       <div class="pure-u-1 pure-u-md-1 pure-u-lg-1">
         <!-- start :: investment spreadsheet -->
-        <table class="js-investmentList">
+        <table class="js-investmentList pure-table">
           <thead class="js-investmentList_Header">
-            <th class="js-investment_Control"></th>
-            <th data-name="symbol" name="symbol">Sym</th>
-            <th name="cap">Cap</th>
-            <th name="price">Price</th>
-            <th name="priceChangeYTD">Price change ytd</th>
-            <th name="trackingError">Tracking error</th>
-            <th name="assets">Assets</th>
-            <th name="volume">Volume</th>
-            <th name="bidAsk">Bid-ask</th>
-            <th name="msRisk">MS risk</th>
-            <th name="stdDev">Std dev</th>
-            <th name="beta">Beta</th>
-            <th name="alpha">Alpha</th>
-            <th name="rsquared">R^2</th>
-            <th name="sharpe">Sharpe</th>
-            <th name="index">Index</th>
-            <th name="market">Market</th>
-            <th name="creator">Creator</th>
+            <tr>
+              <th class="js-investment_Control"></th>
+              <th data-name="symbol" name="symbol">sym</th>
+              <th name="cap">cap</th>
+              <th name="price">price</th>
+              <th name="priceChangeYTD">price change ytd</th>
+              <th name="trackingError">tracking error</th>
+              <th name="assets">assets</th>
+              <th name="volume">volume</th>
+              <th name="bidAsk">bid-ask</th>
+              <th name="msRisk">ms risk</th>
+              <th name="stdDev">std dev</th>
+              <th name="beta">beta</th>
+              <th name="alpha">slpha</th>
+              <th name="rsquared">r^2</th>
+              <th name="sharpe">sharpe</th>
+              <th name="index">index</th>
+              <th name="market">market</th>
+              <th name="creator">creator</th>
+            </tr>
           </thead>
           <tbody class="js-investmentList_Body">
           </tbody>

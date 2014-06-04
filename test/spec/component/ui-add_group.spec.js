@@ -73,7 +73,7 @@ describeComponent('component/ui-add_group', function () {
 
       this.$node.trigger('submit');
 
-      expect(eventSpy.mostRecentCall.data).toEqual({group: expected});
+      expect(eventSpy.mostRecentCall.data).toEqual({group: {name: expected}});
     });
   });
 

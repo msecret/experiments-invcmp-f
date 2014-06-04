@@ -67,7 +67,7 @@ define(function (require) {
       var group = this.select('selectorGroupInput').val();
 
       this.trigger('ui-add_group', {
-        group: group
+        group: {name: group}
       });
     };
 
