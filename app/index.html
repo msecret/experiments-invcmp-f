@@ -3,69 +3,92 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>invcmp</title>
+    <title>stockarator</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="/css/compiled/main.css">
   </head>
   <body>
 
-    <!-- start :: add investment form -->
-    <form class="js-addInvestment pure-form" name="addInvestment">
-      <fieldset>
-        <legend>add stock</legend>
-        <input type="text" class="js-symbol" placeholder="symbol" />
-        <select id="group" class="js-groups pure-input-1-2" placeholder="group">
-          <option class="js-addGroupNullOption" value="">-- group --</option>
-          <option class="js-addGroupButton" value="add">add new  +</option>
-        </select>
-        <input class="js-submit pure-button msecret_button--primary"
-               type="submit" name="addInvestment" value="add stock" />
-      </fieldset>
-    </form>
-    <!-- end :: add investment form -->
+    <div class="pure-g">
+      <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-4">
+        <h1>stockarator</h1>
+      </div>
+      <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+        <h4 class="msecret-end_right">msecret</h4>
+      </div>
+    </div>
 
-    <!-- start :: add group form -->
-    <form class="js-addGroup pure-form" style="display: none;" name="addGroup">
-      <input type="text" class="js-groupInput" placeholder="group name" />
-      <p class="js-warningEmptyGroup warning hidden">The group field is
-      empty</p>
-      <p class="js-warningDuplicateGroup warning hidden">A group with that name
-      already exists</p>
-      <input class="js-submit pure-button msecret_button--primary" 
-             type="submit" value="add group" name="addGroup" />
-      <button class="js-cancelButton pure-button msecret_button--secondary">
-          cancel</button>
-      <i class="js-loadingIcon" class="hidden"></i>
-    </form>
-    <!-- end :: add group form -->
+    <div class="pure-g">
+      <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+        <!-- start :: add investment form -->
+        <form class="js-addInvestment pure-form" name="addInvestment">
+          <fieldset>
+            <legend>add stock</legend>
+            <input type="text" class="js-symbol" placeholder="symbol" />
+            <select id="group" class="js-groups pure-input-1-2" placeholder="group">
+              <option class="js-addGroupNullOption" value="">-- group --</option>
+              <option class="js-addGroupButton" value="add">add new  +</option>
+            </select>
+            <input class="js-submit pure-button msecret-button--primary"
+                   type="submit" name="addInvestment" value="add stock" />
+          </fieldset>
+        </form>
+        <!-- end :: add investment form -->
+      </div>
+    </div>
 
-    <!-- start :: investment spreadsheet -->
-    <table class="js-investmentList">
-      <thead class="js-investmentList_Header">
-        <th class="js-investment_Control"></th>
-        <th data-name="symbol" name="symbol">Sym</th>
-        <th name="cap">Cap</th>
-        <th name="price">Price</th>
-        <th name="priceChangeYTD">Price change ytd</th>
-        <th name="trackingError">Tracking error</th>
-        <th name="assets">Assets</th>
-        <th name="volume">Volume</th>
-        <th name="bidAsk">Bid-ask</th>
-        <th name="msRisk">MS risk</th>
-        <th name="stdDev">Std dev</th>
-        <th name="beta">Beta</th>
-        <th name="alpha">Alpha</th>
-        <th name="rsquared">R^2</th>
-        <th name="sharpe">Sharpe</th>
-        <th name="index">Index</th>
-        <th name="market">Market</th>
-        <th name="creator">Creator</th>
-      </thead>
-      <tbody class="js-investmentList_Body">
-      </tbody>
-    </table>
-    <!-- end :: investment spreadsheet -->
+    <div class="pure-g">
+      <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+      <!-- start :: add group form -->
+      <form class="js-addGroup pure-form" name="addGroup">
+        <fieldset>
+          <input type="text" class="js-groupInput" placeholder="group name" />
+          <p class="js-warningEmptyGroup warning msecret-hidden">The group field is
+          empty</p>
+          <p class="js-warningDuplicateGroup warning msecret-hidden">
+              A group with that name already exists</p>
+          <input class="js-submit pure-button msecret-button--primary" 
+                 type="submit" value="add group" name="addGroup" />
+          <button class="js-cancelButton pure-button msecret-button--secondary">
+              cancel</button>
+          <i class="js-loadingIcon" class="msecret-hidden"></i>
+        </fieldset>
+      </form>
+      <!-- end :: add group form -->
+      </div>
+    </div>
+
+    <div class="pure-g">
+      <div class="pure-u-1 pure-u-md-1 pure-u-lg-1">
+        <!-- start :: investment spreadsheet -->
+        <table class="js-investmentList">
+          <thead class="js-investmentList_Header">
+            <th class="js-investment_Control"></th>
+            <th data-name="symbol" name="symbol">Sym</th>
+            <th name="cap">Cap</th>
+            <th name="price">Price</th>
+            <th name="priceChangeYTD">Price change ytd</th>
+            <th name="trackingError">Tracking error</th>
+            <th name="assets">Assets</th>
+            <th name="volume">Volume</th>
+            <th name="bidAsk">Bid-ask</th>
+            <th name="msRisk">MS risk</th>
+            <th name="stdDev">Std dev</th>
+            <th name="beta">Beta</th>
+            <th name="alpha">Alpha</th>
+            <th name="rsquared">R^2</th>
+            <th name="sharpe">Sharpe</th>
+            <th name="index">Index</th>
+            <th name="market">Market</th>
+            <th name="creator">Creator</th>
+          </thead>
+          <tbody class="js-investmentList_Body">
+          </tbody>
+        </table>
+        <!-- end :: investment spreadsheet -->
+      </div>
+    </div>
 
     <!--[if lt IE 9]>
     <script src="/bower_components/es5-shim/es5-shim.js"></script>
