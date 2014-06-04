@@ -6,35 +6,41 @@
     <title>invcmp</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <style>
-      .hidden {
-        display: none;
-      }
-    </style>
+    <link rel="stylesheet" href="/css/compiled/main.css">
   </head>
   <body>
 
-    <form class="js-addInvestment" name="addInvestment">
-      <input type="text" class="js-symbol" />
-      <select class="js-groups">
-        <option class="js-addGroupNullOption" value="">- </option>
-        <option class="js-addGroupButton" value="add">add new  +</option>
-      </select>
-      <input class="js-submit" type="submit" name="addInvestment" />
+    <!-- start :: add investment form -->
+    <form class="js-addInvestment pure-form" name="addInvestment">
+      <fieldset>
+        <legend>add stock</legend>
+        <input type="text" class="js-symbol" placeholder="symbol" />
+        <select id="group" class="js-groups pure-input-1-2" placeholder="group">
+          <option class="js-addGroupNullOption" value="">-- group --</option>
+          <option class="js-addGroupButton" value="add">add new  +</option>
+        </select>
+        <input class="js-submit pure-button msecret_button--primary"
+               type="submit" name="addInvestment" value="add stock" />
+      </fieldset>
     </form>
-    <form class="js-addGroup hidden" style="display: none;" name="addGroup">
-      <input type="text" class="js-groupInput" />
+    <!-- end :: add investment form -->
+
+    <!-- start :: add group form -->
+    <form class="js-addGroup pure-form" style="display: none;" name="addGroup">
+      <input type="text" class="js-groupInput" placeholder="group name" />
       <p class="js-warningEmptyGroup warning hidden">The group field is
       empty</p>
       <p class="js-warningDuplicateGroup warning hidden">A group with that name
       already exists</p>
-      <input class="js-submit" type="submit" name="addGroup" />
-      <button class="js-cancelButton">cancel</button>
+      <input class="js-submit pure-button msecret_button--primary" 
+             type="submit" value="add group" name="addGroup" />
+      <button class="js-cancelButton pure-button msecret_button--secondary">
+          cancel</button>
       <i class="js-loadingIcon" class="hidden"></i>
     </form>
+    <!-- end :: add group form -->
 
+    <!-- start :: investment spreadsheet -->
     <table class="js-investmentList">
       <thead class="js-investmentList_Header">
         <th class="js-investment_Control"></th>
@@ -59,6 +65,7 @@
       <tbody class="js-investmentList_Body">
       </tbody>
     </table>
+    <!-- end :: investment spreadsheet -->
 
     <!--[if lt IE 9]>
     <script src="/bower_components/es5-shim/es5-shim.js"></script>
