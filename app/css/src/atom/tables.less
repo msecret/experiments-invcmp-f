@@ -13,19 +13,22 @@
   // TODO replace attribute selectors with classes, just a lot of work now.
   // The following code places table cells to be on top of one another.
   .msecret-table,
+  .msecret-table thead,
+  .msecret-table tbody,
   .msecret-table tr,
   .msecret-table th,
   .msecret-table td {
     display: block;
   }
-  .msecret-table__header {
+  .msecret-table .msecret-table__header {
     display: none;
   }
   .msecret-table td {
     border: none;
     border-bottom: 1px;
     position: relative;
-    padding-left: 50%;
+    text-align: left;
+    white-space: normal;
   }
   .msecret-table td:before {
     position: absolute;
@@ -33,6 +36,15 @@
     left: 6px;
     padding-right: 10px;
     white-space: nowrap;
+    width: 45%;
+  }
+  .msecret-table td:before { content: attr(name); }
+
+  // Special styling for group rows
+  .msecret-table__row--dark {
+    td {
+      width: 100%;
+    }
   }
 }
 
