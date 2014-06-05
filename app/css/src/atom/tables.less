@@ -1,0 +1,43 @@
+
+@import (inline) '../../../bower_components/pure/tables.css';
+@import '../gvars/colors';
+@import '../gvars/media_queries';
+
+.msecret-table { }
+.msecret-table__row--dark {
+  background-color: @dark_brown;
+  color: @white_color;
+}
+
+@media (max-width: @primary-lg) {
+  // TODO replace attribute selectors with classes, just a lot of work now.
+  // The following code places table cells to be on top of one another.
+  .msecret-table,
+  .msecret-table tr,
+  .msecret-table th,
+  .msecret-table td {
+    display: block;
+  }
+  .msecret-table__header {
+    display: none;
+  }
+  .msecret-table td {
+    border: none;
+    border-bottom: 1px;
+    position: relative;
+    padding-left: 50%;
+  }
+  .msecret-table td:before {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding-right: 10px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: @primary-md) {
+  .msecret-table th {
+    font-size: .7em;
+  }
+}
