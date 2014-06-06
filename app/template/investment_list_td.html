@@ -1,11 +1,13 @@
 <tr class="js-investmentList_Entry" data-symbol="{{symbol.val}}">
   <td class="js-investmentListEntry-Controls">
-    <button class="js-investmentListEntryControls-Update"
+    <a class="js-investmentListEntryControls-Update"
         data-symbol="{{symbol.val}}">
-      Update</button> 
-    <button class="js-investmentListEntryControls-Delete" 
+      <i class="fa fa-refresh"></i>
+    </a> 
+    <a class="js-investmentListEntryControls-Delete" 
         data-symbol="{{symbol.val}}">
-      Delete</button> 
+      <i class="fa fa-ban"></i>
+    </a> 
   </td>
   <td class="js-investmentList_Entry_Field" data-val="{{symbol.val}}" name="symbol" >
     {{symbol.val}}
