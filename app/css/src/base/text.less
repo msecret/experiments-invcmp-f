@@ -5,9 +5,16 @@
 @import (inline) '../../../bower_components/normalize-css/normalize.css';
 @import (inline) '../../../bower_components/pure/base.css';
 @import '../gvars/colors';
+@import '../gvars/fonts';
 
 h1, h2, h3, h4, h5, h6, p, li, option {
-  line-height: 1.3333%;
   color: @black_color;
+  font-family: @font-headers;
+  line-height: 1.3333%;
+}
+
+td, th, select, button, input {
+  color: @black_color;
+  font-family: @font-headers;
 }
 
