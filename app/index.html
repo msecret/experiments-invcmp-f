@@ -6,6 +6,8 @@
     <title>stockarator</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" 
+          rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Fugaz+One|Montserrat'
           rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/css/compiled/main.css">
@@ -38,7 +40,9 @@
                       class="js-groups pure-input-1-2 msecret-form__text_select" 
                       placeholder="group">
                 <option class="js-addGroupNullOption" value="">-- group --</option>
-                <option class="js-addGroupButton" value="add">add new  +</option>
+                <option class="js-addGroupButton" value="add">
+                    add new  
+                </option>
               </select>
               <input class="js-submit pure-button msecret-button--primary"
                      type="submit" name="addInvestment" value="add stock" />
@@ -64,7 +68,8 @@
                      type="submit" value="add group" name="addGroup" />
               <button class="js-cancelButton pure-button msecret-button--secondary">
                   cancel</button>
-              <i class="js-loadingIcon" class="msecret-hidden"></i>
+              <i class="js-loadingIcon fa fa-spin fa-circle-o-notch
+                msecret-hidden"></i>
             </fieldset>
           </form>
           <!-- end :: add group form -->
