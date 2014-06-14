@@ -8,23 +8,22 @@ define(function (require) {
 
   var defineComponent = require('flight/lib/component');
   var withRequest = require('flight-request/lib/with_request');
+  var config = require('component/config');
 
   /**
    * Module exports
    */
-
   return defineComponent(dataInvestments, withRequest);
 
   /**
    * Module function
    */
-
   function dataInvestments() {
     this.defaultAttrs({
-      urlCreate: '/investments',
-      urlGet: '/investments/',
-      urlUpdate: '/investments/',
-      urlDelete: '/investments/'
+      urlCreate: config.API_PREFIX + '/investments',
+      urlGet: config.API_PREFIX + '/investments/',
+      urlUpdate: config.API_PREFIX + '/investments/',
+      urlDelete: config.API_PREFIX + '/investments/'
     });
 
     this.after('initialize', function () {
@@ -147,7 +146,6 @@ define(function (require) {
       var self = this,
           opts = opts || {};
 
-      console.log(investment);
       this.post({
         url: this.attr.urlCreate,
         data: investment,
