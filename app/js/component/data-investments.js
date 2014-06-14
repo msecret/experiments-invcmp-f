@@ -151,7 +151,7 @@ define(function (require) {
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(investment),
         success: function(resp) {
-          var investment = self._setTimeStampOnInvestment(resp.investment);
+          var investment = self._setTimeStampOnInvestment(resp.data.investment);
           opts.success && opts.success({investment: investment});
         },
         error: function(resp) {
@@ -179,7 +179,7 @@ define(function (require) {
         contentType: 'application/json; charset=utf-8',
         data: investment,
         success: function(resp) {
-          var investment = self._setTimeStampOnInvestment(resp.investment);
+          var investment = self._setTimeStampOnInvestment(resp.data.investment);
           opts.success && opts.success({investment: investment});
         },
         error: function(resp) {

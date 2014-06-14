@@ -99,7 +99,7 @@ describeComponent('component/data-investments', function () {
       eventSpy = spyOnEvent(document, 'data-added_investment');
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
-                               JSON.stringify({investment: expected})]);
+                               JSON.stringify({data: {investment: expected}})]);
 
       this.$node.trigger('ui-add_investment', 
                         {investment: testInvestmentRequest});
@@ -126,7 +126,7 @@ describeComponent('component/data-investments', function () {
       eventSpy = spyOnEvent(document, 'data-added_investment');
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
-                               JSON.stringify({investment: expected})]);
+                               JSON.stringify({data: {investment: expected}})]);
 
       this.$node.trigger('ui-add_investment', 
                         {investment: testInvestmentRequest});
@@ -198,7 +198,8 @@ describeComponent('component/data-investments', function () {
       eventSpy = spyOnEvent(document, 'data-added_investment');
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
-                               JSON.stringify({investment: testInvestment})]);
+                               JSON.stringify(
+                                 {data: {investment: testInvestment}})]);
 
       this.$node.trigger('ui-add_investment', 
                         {investment: testInvestmentRequest});
@@ -236,7 +237,8 @@ describeComponent('component/data-investments', function () {
       eventSpy = spyOnEvent(document, 'data-added_investment');
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
-                               JSON.stringify({investment: testInvestment})]);
+                               JSON.stringify(
+                                      {data: {investment: testInvestment}})]);
 
       this.$node.trigger('ui-add_investment', 
                         {investment: testInvestmentRequest});
@@ -368,7 +370,7 @@ describeComponent('component/data-investments', function () {
       eventSpy = spyOnEvent(document, 'data-updated_investment');
       server.respondWith('POST', API_PREFIX + '/investments/'+ expected.symbol,
                               [200, { 'Content-Type': 'application/json' },
-                               JSON.stringify({investment: expected})]);
+                               JSON.stringify({data: {investment: expected}})]);
 
       this.$node.trigger('ui-update_investment', 
                         {investment: expected});
@@ -396,7 +398,8 @@ describeComponent('component/data-investments', function () {
       eventSpy = spyOnEvent(document, 'data-updated_investment');
       server.respondWith('POST', API_PREFIX + '/investments/'+ testInvestment.symbol,
                               [200, { 'Content-Type': 'application/json' },
-                               JSON.stringify({investment: testInvestment})]);
+                               JSON.stringify(
+                                 {data: {investment: testInvestment}})]);
 
       this.$node.trigger('ui-update_investment', 
                         {investment: testInvestment});
@@ -430,7 +433,8 @@ describeComponent('component/data-investments', function () {
       eventSpy = spyOnEvent(document, 'data-updated_investment');
       server.respondWith('POST', API_PREFIX + '/investments/' + testInvestment.symbol,
                               [200, { 'Content-Type': 'application/json' },
-                               JSON.stringify({investment: testInvestment})]);
+                               JSON.stringify(
+                                 {data: {investment: testInvestment}})]);
 
       this.$node.trigger('ui-update_investment', 
                         {investment: testInvestment});
