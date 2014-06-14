@@ -148,7 +148,8 @@ define(function (require) {
 
       this.post({
         url: this.attr.urlCreate,
-        data: investment,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(investment),
         success: function(resp) {
           var investment = self._setTimeStampOnInvestment(resp.investment);
           opts.success && opts.success({investment: investment});
@@ -175,6 +176,7 @@ define(function (require) {
 
       this.put({
         url: this.attr.urlUpdate + investment.symbol,
+        contentType: 'application/json; charset=utf-8',
         data: investment,
         success: function(resp) {
           var investment = self._setTimeStampOnInvestment(resp.investment);
@@ -222,6 +224,7 @@ define(function (require) {
 
       this.destroy({
         url: this.attr.urlDelete + symbolName,
+        contentType: 'application/json; charset=utf-8',
         success: function(resp) {
           opts.success && opts.success(resp);
         },
