@@ -147,6 +147,7 @@ define(function (require) {
       var self = this,
           opts = opts || {};
 
+      console.log(investment);
       this.post({
         url: this.attr.urlCreate,
         data: investment,

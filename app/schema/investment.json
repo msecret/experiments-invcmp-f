@@ -1,0 +1,12 @@
+{
+	"title": "Investment",
+  "description": "Models an investment on any searchable stock market",
+	"type": "object",
+	"properties": {
+    "symbol": {
+      "description": "Unique symbol which represents asset on stock market",
+      "type": "string"
+    }
+	},
+	"required": ["symbol"]
+}
