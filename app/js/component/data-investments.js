@@ -174,16 +174,17 @@ define(function (require) {
       var self = this,
           opts = opts || {};
 
-      this.put({
+      $.ajax({
         url: this.attr.urlUpdate + investment.id,
         contentType: 'application/json; charset=utf-8',
         data: investment,
+        type: 'PUT',
         success: function(resp) {
           var investment = self._setTimeStampOnInvestment(resp.data.investment);
           opts.success && opts.success({investment: investment});
         },
         error: function(resp) {
-          opts.error && opts.error(resp);
+          opts.error && opts.error(JSON.parse(resp.responseText));
         }
       });
     };
@@ -222,7 +223,7 @@ define(function (require) {
     this.deleteInvestment = function(investmentId, opts) {
       var opts = opts || {};
 
-      this.destroy({
+      $.ajax({
         url: this.attr.urlDelete + investmentId,
         contentType: 'application/json; charset=utf-8',
         type: 'DELETE',
@@ -230,7 +231,7 @@ define(function (require) {
           opts.success && opts.success(resp);
         },
         error: function(resp) {
-          opts.error && opts.error(resp);
+          opts.error && opts.error(JSON.parse(resp.responseText));
         }
       });
     };
@@ -276,7 +277,7 @@ define(function (require) {
       if (resp.statusCode >= 400 && resp.statusCode < 500) {
         this.trigger('data-invalid_investment', resp);
       }
-      if (resp.statusCode >= 500) {
+      else {
         this.trigger('data-failed_request', resp);
       }
     };

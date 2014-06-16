@@ -355,7 +355,7 @@ describeComponent('component/data-investments', function () {
 
       expect(server.requests[0].url).toEqual(
         API_PREFIX + '/investment/'+ testInvestment.id);
-      expect(server.requests[0].method).toEqual('POST');
+      expect(server.requests[0].method).toEqual('PUT');
     });
     it('should trigger data-updated_investment if the request succeeds',
        function() {
@@ -372,7 +372,7 @@ describeComponent('component/data-investments', function () {
 
       };
       eventSpy = spyOnEvent(document, 'data-updated_investment');
-      server.respondWith('POST', API_PREFIX + '/investment/'+ expected.id,
+      server.respondWith('PUT', API_PREFIX + '/investment/'+ expected.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify({data: {investment: expected}})]);
 
@@ -400,7 +400,7 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-updated_investment');
-      server.respondWith('POST', API_PREFIX + '/investment/'+ testInvestment.id,
+      server.respondWith('PUT', API_PREFIX + '/investment/'+ testInvestment.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(
                                  {data: {investment: testInvestment}})]);
@@ -436,7 +436,7 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-updated_investment');
-      server.respondWith('POST', API_PREFIX + '/investment/' + testInvestment.id,
+      server.respondWith('PUT', API_PREFIX + '/investment/' + testInvestment.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(
                                  {data: {investment: testInvestment}})]);
@@ -472,7 +472,7 @@ describeComponent('component/data-investments', function () {
       expect(server.requests[0]).toBeDefined();
       expect(server.requests[0].url).toEqual(
         API_PREFIX + '/investment/'+ testInvestmentRequest.id);
-      expect(server.requests[0].method).toEqual('POST');
+      expect(server.requests[0].method).toEqual('DELETE');
     });
     it('should trigger a data-deleted_symbol on document with the investment',
        function() {
@@ -486,7 +486,7 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-deleted_investment');
-      server.respondWith('POST', API_PREFIX + '/investment/'+ expected.id,
+      server.respondWith('DELETE', API_PREFIX + '/investment/'+ expected.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
@@ -529,7 +529,7 @@ describeComponent('component/data-investments', function () {
         message: 'Not Found'
       };
       eventSpy = spyOnEvent(document, 'data-invalid_investment');
-      server.respondWith('POST', API_PREFIX + '/investment/'+
+      server.respondWith('DELETE', API_PREFIX + '/investment/'+
                                 testInvestmentRequest.id,
                               [404, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
@@ -546,13 +546,15 @@ describeComponent('component/data-investments', function () {
           expected;
 
       expected = {
-        investment: testInvestmentRequest,
+        data: {
+          investment: testInvestmentRequest,
+        },
         status: 500,
         statusCode: 500,
         message: 'Internal Server Error'
       };
       eventSpy = spyOnEvent(document, 'data-failed_request');
-      server.respondWith('POST', API_PREFIX + '/investment/'+
+      server.respondWith('DELETE', API_PREFIX + '/investment/'+
                                 testInvestmentRequest.id,
                               [500, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
