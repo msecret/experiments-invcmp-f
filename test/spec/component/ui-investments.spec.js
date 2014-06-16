@@ -251,7 +251,7 @@ describeComponent('component/ui-investments', function () {
         symbol: 'SYN'
       };
       eventSpy = spyOnEvent(document, 'ui-update_investment');
-      this.component.addInvestmentNoGroup(testInvestment.fields);
+      this.component.addInvestmentNoGroup(testInvestment);
 
       entryUpdateSelector = this.component.findInvestment(expected.symbol)
           .find(this.component.attr.selectorEntryUpdate)
@@ -283,7 +283,7 @@ describeComponent('component/ui-investments', function () {
         field: field
       };
       eventSpy = spyOnEvent(document, 'ui-edit_investment_field');
-      this.component.addInvestmentNoGroup(testInvestment.fields);
+      this.component.addInvestmentNoGroup(testInvestment);
 
       entryFieldSelector = this.component.findInvestment(testInvestment.symbol)
           .find('td[name="'+ field +'"]')
@@ -310,7 +310,7 @@ describeComponent('component/ui-investments', function () {
       };
       expected = {symbol: 'SYR'};
       eventSpy = spyOnEvent(document, 'ui-delete_investment');
-      this.component.addInvestmentNoGroup(testInvestment.fields);
+      this.component.addInvestmentNoGroup(testInvestment);
 
       entryDeleteSelector = this.component.findInvestment(expected.symbol)
           .find(this.component.attr.selectorEntryDelete)
@@ -337,7 +337,7 @@ describeComponent('component/ui-investments', function () {
         }
       }];
       eventSpy = spyOnEvent(document, 'ui-updated_investments');
-      this.component.addInvestmentNoGroup(expected.fields);
+      this.component.addInvestmentNoGroup(expected);
 
       $(document).trigger('data-updated_investments', {investments:
                           expected});
@@ -371,7 +371,7 @@ describeComponent('component/ui-investments', function () {
           assets: {val: expectedAssets}
         }
       }];
-      this.component.addInvestmentNoGroup(testInvestment.fields);
+      this.component.addInvestmentNoGroup(testInvestment);
       $testInvestment = this.component.findInvestment(testInvestment.symbol);
 
       actualCap = $testInvestment.find('td[name="cap"]').data('val');
@@ -417,8 +417,8 @@ describeComponent('component/ui-investments', function () {
           assets: {val: 201}
         }
       };
-      this.component.addInvestmentNoGroup(testInvestmentA.fields);
-      this.component.addInvestmentNoGroup(testInvestmentB.fields);
+      this.component.addInvestmentNoGroup(testInvestmentA);
+      this.component.addInvestmentNoGroup(testInvestmentB);
       $testInvestmentA = this.component.findInvestment(testInvestmentA.symbol);
       $testInvestmentB = this.component.findInvestment(testInvestmentB.symbol);
       aCap = $testInvestmentA.children('td[name="cap"]').data('val');
@@ -479,7 +479,7 @@ describeComponent('component/ui-investments', function () {
           assets: {val: expectedAssets}
         }
       };
-      this.component.addInvestmentNoGroup(expected.fields);
+      this.component.addInvestmentNoGroup(expected);
 
       $(document).trigger('data-updated_investments', {investments:
                           {symbol: 'SYR'}});
@@ -507,7 +507,7 @@ describeComponent('component/ui-investments', function () {
         }
       };
       expected = {symbol: 'SYT'};
-      this.component.addInvestmentNoGroup(testInvestment.fields);
+      this.component.addInvestmentNoGroup(testInvestment);
       actual = this.component.findInvestment(expected.symbol);
 
       expect(actual.length).toEqual(1);
@@ -536,7 +536,7 @@ describeComponent('component/ui-investments', function () {
       expected = {symbol: 'SYT'};
 
       this.component.addGroup(testGroup);
-      this.component.addInvestmentNoGroup(testInvestment.fields);
+      this.component.addInvestmentNoGroup(testInvestment);
       actual = this.component.findInvestment(expected.symbol);
 
       expect(actual.length).toEqual(1);
@@ -558,7 +558,7 @@ describeComponent('component/ui-investments', function () {
       };
       expected = {symbol: 'SYX'};
       eventSpy = spyOnEvent(document, 'ui-deleted_investment');
-      this.component.addInvestmentNoGroup(testInvestment.fields);
+      this.component.addInvestmentNoGroup(testInvestment);
 
       $(document).trigger('data-deleted_investment', {investment: expected});
 
@@ -576,7 +576,7 @@ describeComponent('component/ui-investments', function () {
       deadGroup = {};
       testGroup = {name: 'TestGroup A'};
       this.component.addGroup(testGroup);
-      this.component.addInvestmentToGroup(testInvestment.fields, testGroup);
+      this.component.addInvestmentToGroup(testInvestment, testGroup);
 
       actual = this.component.findInvestment(testInvestment.symbol);
       expect(actual.length).toEqual(1);
@@ -596,7 +596,7 @@ describeComponent('component/ui-investments', function () {
       deadGroup = {name: 'Non-existant'};
       testGroup = {name: 'TestGroup A'};
       this.component.addGroup(testGroup);
-      this.component.addInvestmentToGroup(testInvestment.fields, testGroup);
+      this.component.addInvestmentToGroup(testInvestment, testGroup);
 
       actual = this.component.findInvestment(testInvestment.symbol);
       expect(actual.length).toEqual(1);
@@ -618,7 +618,7 @@ describeComponent('component/ui-investments', function () {
       expectedInvestment.group = expectedGroup;
 
       this.component.addGroup(expectedGroup);
-      this.component.addInvestmentToGroup(expectedInvestment.fields, 
+      this.component.addInvestmentToGroup(expectedInvestment, 
                                           expectedGroup);
 
       actual = this.component.findGroup(expectedGroup.name);

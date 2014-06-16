@@ -9,7 +9,9 @@ describeComponent('component/data-investments', function () {
   // Initialize the component and attach it to the DOM
   beforeEach(function () {
     setupComponent();
-    testInvestmentRequest = { symbol: 'TST',
+    testInvestmentRequest = { 
+      id: 1,
+      symbol: 'TST',
       group: {name: 'TGroup'}
     };
     testInvestment = {
@@ -287,6 +289,7 @@ describeComponent('component/data-investments', function () {
           eventSpy;
 
       testInvestmentRequest = {
+        id: 5,
         symbol: 'TNZ',
         group: {name: 'TGroup1'}
       };
@@ -299,8 +302,8 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-got_investment');
-      server.respondWith('GET', API_PREFIX + '/investments/'+
-                                testInvestmentRequest.symbol,
+      server.respondWith('GET', API_PREFIX + '/investment/'+
+                                testInvestmentRequest.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify({investment: expected})]);
 
@@ -345,13 +348,13 @@ describeComponent('component/data-investments', function () {
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
-    it('should make a PUT ajax call to /investments/{sym} if symbol string', 
+    it('should make a PUT ajax call to /investment/{id} if symbol string', 
        function() {
       this.$node.trigger('ui-update_investment', {investment: 
                                                    testInvestment});
 
       expect(server.requests[0].url).toEqual(
-        API_PREFIX + '/investments/'+ testInvestment.symbol);
+        API_PREFIX + '/investment/'+ testInvestment.id);
       expect(server.requests[0].method).toEqual('POST');
     });
     it('should trigger data-updated_investment if the request succeeds',
@@ -360,6 +363,7 @@ describeComponent('component/data-investments', function () {
           eventSpy;
 
       expected = {
+        id: 4,
         symbol: 'TNT',
         group: {name: 'TGroup1'},
         fields: {
@@ -368,7 +372,7 @@ describeComponent('component/data-investments', function () {
 
       };
       eventSpy = spyOnEvent(document, 'data-updated_investment');
-      server.respondWith('POST', API_PREFIX + '/investments/'+ expected.symbol,
+      server.respondWith('POST', API_PREFIX + '/investment/'+ expected.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify({data: {investment: expected}})]);
 
@@ -396,7 +400,7 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-updated_investment');
-      server.respondWith('POST', API_PREFIX + '/investments/'+ testInvestment.symbol,
+      server.respondWith('POST', API_PREFIX + '/investment/'+ testInvestment.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(
                                  {data: {investment: testInvestment}})]);
@@ -423,6 +427,7 @@ describeComponent('component/data-investments', function () {
         newDate.getDate() + '/' + 
         newDate.getFullYear();
       testInvestment = {
+        id: 3,
         symbol: 'MNT',
         fields: {
           symbol: {val: 'MNT'},
@@ -431,7 +436,7 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-updated_investment');
-      server.respondWith('POST', API_PREFIX + '/investments/' + testInvestment.symbol,
+      server.respondWith('POST', API_PREFIX + '/investment/' + testInvestment.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(
                                  {data: {investment: testInvestment}})]);
@@ -458,7 +463,7 @@ describeComponent('component/data-investments', function () {
       server.restore();
     });
 
-    it('should request a DELETE on /investments/{name}', function() {
+    it('should request a DELETE on /investment/{id}', function() {
       var expected = {symbol: 'SYN'};
 
       this.$node.trigger('ui-delete_investment', 
@@ -466,21 +471,22 @@ describeComponent('component/data-investments', function () {
 
       expect(server.requests[0]).toBeDefined();
       expect(server.requests[0].url).toEqual(
-        API_PREFIX + '/investments/'+ testInvestmentRequest.symbol);
+        API_PREFIX + '/investment/'+ testInvestmentRequest.id);
       expect(server.requests[0].method).toEqual('POST');
     });
-    it('should trigger a data-deleted_symbol on document with the symbol',
+    it('should trigger a data-deleted_symbol on document with the investment',
        function() {
         var eventSpy,
             expected;
 
       expected = { 
+        id: 2,
         symbol: 'TMT',
         group: {name: 'TGroup3'}
       };
 
       eventSpy = spyOnEvent(document, 'data-deleted_investment');
-      server.respondWith('POST', API_PREFIX + '/investments/'+ expected.symbol,
+      server.respondWith('POST', API_PREFIX + '/investment/'+ expected.id,
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
@@ -523,8 +529,8 @@ describeComponent('component/data-investments', function () {
         message: 'Not Found'
       };
       eventSpy = spyOnEvent(document, 'data-invalid_investment');
-      server.respondWith('POST', API_PREFIX + '/investments/'+
-                                testInvestmentRequest.symbol,
+      server.respondWith('POST', API_PREFIX + '/investment/'+
+                                testInvestmentRequest.id,
                               [404, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
@@ -546,8 +552,8 @@ describeComponent('component/data-investments', function () {
         message: 'Internal Server Error'
       };
       eventSpy = spyOnEvent(document, 'data-failed_request');
-      server.respondWith('POST', API_PREFIX + '/investments/'+
-                                testInvestmentRequest.symbol,
+      server.respondWith('POST', API_PREFIX + '/investment/'+
+                                testInvestmentRequest.id,
                               [500, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 

@@ -42,7 +42,6 @@ define(function (require) {
       this.on(document, 'data-updated_investments', this.handleUpdatedInvestments);
       this.on(document, 'data-deleted_investment', this.handleDeletedInvestment);
       this.on(document, 'data-deleted_group', this.handleDeletedGroup);
-      this.on(this.attr.selectorEntryDelete, 'click', this.handleEntryDelete);
 
       this.on('click', {'selectorEntryDelete': this.handleEntryDelete});
       this.on('click', {'selectorEntryUpdate': this.handleEntryUpdate});
@@ -82,16 +81,15 @@ define(function (require) {
     this.handleAddedInvestment = function(ev, data) {
       var investment;
 
-      if (data.investment && data.investment.symbol &&
-          data.investment.fields) {
+      if (data.investment && data.investment.symbol) {
         investment = data.investment;
 
         if (investment.group) {
-          this.addInvestmentToGroup(investment.fields, 
+          this.addInvestmentToGroup(investment, 
                                 investment.group);
         }
         else {
-          this.addInvestmentNoGroup(investment.fields);
+          this.addInvestmentNoGroup(investment);
         }
 
         this.trigger('ui-added_investment', data.investment);
@@ -281,7 +279,7 @@ define(function (require) {
           html;
 
       $investment = this.findInvestment(investment.symbol);
-      html = this.renderInvestment(investment.fields);
+      html = this.renderInvestment(investment);
 
       $investment.replaceWith(html);
     };

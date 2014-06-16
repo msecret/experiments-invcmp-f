@@ -1,7 +1,7 @@
-<tr class="js-investmentList_Entry" data-symbol="{{symbol.val}}">
+<tr class="js-investmentList_Entry" data-id="{{id}}" data-symbol="{{symbol}}">
   <td class="js-investmentListEntry-Controls">
     <a class="js-investmentListEntryControls-Update"
-        data-symbol="{{symbol.val}}">
+        data-symbol="{{symbol}}">
       <i class="fa fa-refresh"></i>
     </a> 
     <a class="js-investmentListEntryControls-Delete" 
@@ -9,74 +9,120 @@
       <i class="fa fa-ban"></i>
     </a> 
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{symbol.val}}" name="symbol" >
-    {{symbol.val}}
-    <time class="js-investmentListEntry-time">{{symbol.updatedAtFormatted}}</time>
-  </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{cap.val}}" name="cap" >
-    {{cap.val}}
-    <time class="js-investmentListEntry-time">{{cap.updatedAtFormatted}}</time>
-  </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{price.val}}" name="price" >
-    {{price.val}}
-    <time class="js-investmentListEntry-time">{{price.updatedAtFormatted}}</time>
-  </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{priceChangeYTD.val}}" name="priceChangeYTD" >
-    {{priceChangeYTD.val}}
+  <td class="js-investmentList_Entry_Field" data-val="{{symbol}}" name="symbol" >
+    {{symbol}}
     <time class="js-investmentListEntry-time">
-      {{priceChangeYTD.updatedAtFormatted}}</time>
+      {{fields.symbol.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{trackingError.val}}" name="trackingError" >
-    {{trackingError.val}}
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.cap.val}}" name="cap" >
+    {{fields.cap.val}}
     <time class="js-investmentListEntry-time">
-      {{trackingError.updatedAtFormatted}}</time>
+      {{fields.cap.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{assets.val}}" name="assets" >
-    {{assets.val}}
-    <time class="js-investmentListEntry-time">{{assets.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.price.val}}" name="price" >
+    {{fields.price.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.price.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{volume.val}}" name="volume" >
-    {{volume.val}}
-    <time class="js-investmentListEntry-time">{{volume.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field"  
+        data-val="{{fields.priceChangeYTD.val}}" name="priceChangeYTD" >
+    {{fields.priceChangeYTD.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.priceChangeYTD.updatedAtFormatted}}</time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{bidAsk.val}}" name="bidAsk" >
-    {{bidAsk.val}}
-    <time class="js-investmentListEntry-time">{{bidAsk.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.trackingError.val}}" name="trackingError" >
+    {{fields.trackingError.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.trackingError.updatedAtFormatted}}</time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{msRisk.val}}" name="msRisk" >
-    {{msRisk.val}}
-    <time class="js-investmentListEntry-time">{{msRisk.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.assets.val}}" name="assets" >
+    {{fields.assets.val}}
+    <time class="js-investmentListEntry-time">
+      {{fieldsassets.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{stdDev.val}}" name="stdDev" >
-    {{stdDev.val}}
-    <time class="js-investmentListEntry-time">{{stdDev.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.volume.val}}" name="volume" >
+    {{fields.volume.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.volume.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{beta.val}}" name="beta" >
-    {{beta.val}}
-    <time class="js-investmentListEntry-time">{{beta.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.bidAsk.val}}" name="bidAsk" >
+    {{fields.bidAsk.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.bidAsk.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{alpha.val}}" name="alpha" >
-    {{alpha.val}}
-    <time class="js-investmentListEntry-time">{{alpha.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.msRisk.val}}" name="msRisk" >
+    {{fields.msRisk.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.msRisk.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{rsquared.val}}" name="rsquared" >
-    {{rsquared.val}}
-    <time class="js-investmentListEntry-time">{{rsquared.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.stdDev.val}}" name="stdDev" >
+    {{fields.stdDev.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.stdDev.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{sharpe.val}}" name="sharpe" >
-    {{sharpe.val}}
-    <time class="js-investmentListEntry-time">{{sharpe.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.beta.val}}" name="beta" >
+    {{fields.beta.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.beta.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{index.val}}" name="index" >
-    {{index.val}}
-    <time class="js-investmentListEntry-time">{{index.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.alpha.val}}" name="alpha" >
+    {{fields.alpha.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.alpha.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{market.val}}" name="market" >
-    {{market.val}}
-    <time class="js-investmentListEntry-time">{{market.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.rsquared.val}}" name="rsquared" >
+    {{fields.rsquared.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.rsquared.updatedAtFormatted}}
+    </time>
   </td>
-  <td class="js-investmentList_Entry_Field" data-val="{{creator.val}}" name="creator" >
-    {{creator.val}}
-    <time class="js-investmentListEntry-time">{{creator.updatedAtFormatted}}</time>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.sharpe.val}}" name="sharpe" >
+    {{fields.sharpe.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.sharpe.updatedAtFormatted}}
+    </time>
+  </td>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.index.val}}" name="index" >
+    {{fields.index.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.index.updatedAtFormatted}}
+    </time>
+  </td>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.market.val}}" name="market" >
+    {{fields.market.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.market.updatedAtFormatted}}
+    </time>
+  </td>
+  <td class="js-investmentList_Entry_Field" 
+        data-val="{{fields.creator.val}}" name="creator" >
+    {{fields.creator.val}}
+    <time class="js-investmentListEntry-time">
+      {{fields.creator.updatedAtFormatted}}
+    </time>
   </td>
 </tr>

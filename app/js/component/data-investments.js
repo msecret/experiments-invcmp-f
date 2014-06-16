@@ -21,9 +21,9 @@ define(function (require) {
   function dataInvestments() {
     this.defaultAttrs({
       urlCreate: config.API_PREFIX + '/investments',
-      urlGet: config.API_PREFIX + '/investments/',
-      urlUpdate: config.API_PREFIX + '/investments/',
-      urlDelete: config.API_PREFIX + '/investments/'
+      urlGet: config.API_PREFIX + '/investment/',
+      urlUpdate: config.API_PREFIX + '/investment/',
+      urlDelete: config.API_PREFIX + '/investment/'
     });
 
     this.after('initialize', function () {
@@ -121,7 +121,7 @@ define(function (require) {
       }
       var self = this;
 
-      this.deleteInvestment(data.investment.symbol, {
+      this.deleteInvestment(data.investment.id, {
         success: function(resp) {
           self.trigger('data-deleted_investment', resp);
         },
@@ -175,7 +175,7 @@ define(function (require) {
           opts = opts || {};
 
       this.put({
-        url: this.attr.urlUpdate + investment.symbol,
+        url: this.attr.urlUpdate + investment.id,
         contentType: 'application/json; charset=utf-8',
         data: investment,
         success: function(resp) {
@@ -199,7 +199,7 @@ define(function (require) {
           opts = opts || {};
 
       this.get({
-        url: this.attr.urlGet + data.symbol,
+        url: this.attr.urlGet + data.id,
         success: function(resp) {
           var investment = self._setTimeStampOnInvestment(resp.investment);
           opts.success && opts.success({investment: investment});
@@ -214,17 +214,18 @@ define(function (require) {
     /**
      * Deletes a symbol.
      *
-     * Executes a delete request to /symbol/{sym}.
+     * Executes a delete request to /investment/{id}}.
      *
-     *  @param {String} symbolName The symbol 3-4 letter name.
+     *  @param {String} investmentId The id of the investment.
      *  @param {Object} opts Hash containing just succes and error handlers.
      */
-    this.deleteInvestment = function(symbolName, opts) {
+    this.deleteInvestment = function(investmentId, opts) {
       var opts = opts || {};
 
       this.destroy({
-        url: this.attr.urlDelete + symbolName,
+        url: this.attr.urlDelete + investmentId,
         contentType: 'application/json; charset=utf-8',
+        type: 'DELETE',
         success: function(resp) {
           opts.success && opts.success(resp);
         },
