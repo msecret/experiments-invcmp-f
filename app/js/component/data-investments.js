@@ -89,8 +89,7 @@ define(function (require) {
      * @param {Object} data The data payload to update investment with.
      */
     this.handleUpdateInvestment = function(ev, data) {
-      if (!data || !data.investment || 
-            (typeof data.investment.symbol !== 'string')) {
+      if (!data || !data.investment || !data.investment.id) {
         this.trigger('data-invalid_investment');
         return;
       }
@@ -114,8 +113,7 @@ define(function (require) {
      * @param {Object} data Data object, should contain symbol to be deleted.
      */
     this.handleDeleteInvestment = function(ev, data) {
-      if (!data || !data.investment || 
-            (typeof data.investment.symbol !== 'string')) {
+      if (!data || !data.investment || !data.investment.id) {
         this.trigger('data-invalid_investment');
         return;
       }
@@ -123,7 +121,7 @@ define(function (require) {
 
       this.deleteInvestment(data.investment.id, {
         success: function(resp) {
-          self.trigger('data-deleted_investment', resp);
+          self.trigger('data-deleted_investment', data);
         },
         error: function(resp) {
           self._handleError(resp);

@@ -242,12 +242,14 @@ describeComponent('component/ui-investments', function () {
           entryUpdateSelector;
 
       testInvestment = {
+        id: 3,
         symbol: 'SYN',
         fields: {
           symbol: {val: 'SYN'}
         }
       };
       expected = {
+        id: 3,
         symbol: 'SYN'
       };
       eventSpy = spyOnEvent(document, 'ui-update_investment');
@@ -303,12 +305,13 @@ describeComponent('component/ui-investments', function () {
           entryDeleteSelector;
 
       testInvestment = {
+        id: 3,
         symbol: 'SYR',
         fields: {
           symbol: {val: 'SYR'}
         }
       };
-      expected = {symbol: 'SYR'};
+      expected = {symbol: 'SYR', id: 3};
       eventSpy = spyOnEvent(document, 'ui-delete_investment');
       this.component.addInvestmentNoGroup(testInvestment);
 
@@ -506,7 +509,7 @@ describeComponent('component/ui-investments', function () {
           symbol: {val: 'SYT'}
         }
       };
-      expected = {symbol: 'SYT'};
+      expected = {symbol: 'SYT', id: 9};
       this.component.addInvestmentNoGroup(testInvestment);
       actual = this.component.findInvestment(expected.symbol);
 

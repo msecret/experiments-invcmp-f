@@ -15,6 +15,7 @@ describeComponent('component/data-investments', function () {
       group: {name: 'TGroup'}
     };
     testInvestment = {
+      id: 1,
       symbol: 'TST',
       group: {name: 'TGroup'},
       fields: {
@@ -392,6 +393,7 @@ describeComponent('component/data-investments', function () {
       clock.tick(50);
       expected = new Date();
       testInvestment = {
+        id: 3,
         symbol: 'MNT',
         fields: {
           symbol: {val: 'MNT'},
@@ -493,11 +495,11 @@ describeComponent('component/data-investments', function () {
       this.$node.trigger('ui-delete_investment', {investment: expected});
       server.respond();
 
-      expect(eventSpy.mostRecentCall.data).toEqual(expected);
+      expect(eventSpy.mostRecentCall.data).toEqual({investment: expected});
     });
-    it('should trigger a data-invalid_investment if the symbol is missing', 
+    it('should trigger a data-invalid_investment if the id is missing', 
        function() {
-      var testInvestment = {group: 'Groupa'},
+      var testInvestment = {symbol: 'NDS', group: 'Groupa'},
           eventSpy;
 
       eventSpy = spyOnEvent(document, 'data-invalid_investment');

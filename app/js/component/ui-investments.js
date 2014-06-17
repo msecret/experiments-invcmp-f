@@ -105,9 +105,11 @@ define(function (require) {
     this.handleEntryDelete = function(ev, el) {
       ev.preventDefault();
       var $target = $(ev.target).parents(this.attr.selectorEntry),
+          id = $target.data('id'),
           symbol = $target.data('symbol');
       this.trigger('ui-delete_investment', {investment: 
-                          {symbol: symbol}});
+                          { id: id,
+                            symbol: symbol}});
     };
 
     /**
@@ -119,9 +121,11 @@ define(function (require) {
     this.handleEntryUpdate = function(ev, el) {
       ev.preventDefault();
       var $target = $(ev.target).parents(this.attr.selectorEntry),
+          id = $target.data('id'),
           symbol = $target.data('symbol');
       this.trigger('ui-update_investment', {investment: 
-                          {symbol: symbol}});
+                          { id: id,
+                            symbol: symbol}});
     };
 
     /**
