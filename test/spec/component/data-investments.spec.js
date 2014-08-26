@@ -92,7 +92,7 @@ describeComponent('component/data-investments', function () {
 
       yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql?' +
         'format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
-        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3DMNS'
+        '&q=SELECT+*+FROM+yahoo.finance.keystats+WHERE+symbol%3DMNS'
 
       server.respondWith('GET', yqlQueryUrl,
                               [404, { 'Content-Type': 'application/json' },
@@ -110,7 +110,7 @@ describeComponent('component/data-investments', function () {
 
       yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
         '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
-        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TST\'';
+        '&q=SELECT+*+FROM+yahoo.finance.keystats+WHERE+symbol%3D\'TST\'';
 
       server.respondWith('GET', yqlQueryUrl,
                               [200, { 'Content-Type': 'application/json' },
@@ -156,7 +156,7 @@ describeComponent('component/data-investments', function () {
 
       yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
         '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
-        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TNT\'';
+        '&q=SELECT+*+FROM+yahoo.finance.keystats+WHERE+symbol%3D\'TNT\'';
 
       eventSpy = spyOnEvent(document, 'data-added_investment');
 
@@ -204,7 +204,7 @@ describeComponent('component/data-investments', function () {
 
       yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
         '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
-        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TNT\'';
+        '&q=SELECT+*+FROM+yahoo.finance.keystats+WHERE+symbol%3D\'TNT\'';
 
       server.respondWith('GET', yqlQueryUrl,
                               [200, { 'Content-Type': 'application/json' },
@@ -264,7 +264,7 @@ describeComponent('component/data-investments', function () {
 
       yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
         '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
-        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TST\'';
+        '&q=SELECT+*+FROM+yahoo.finance.keystats+WHERE+symbol%3D\'TST\'';
 
       server.respondWith('GET', yqlQueryUrl,
                               [200, { 'Content-Type': 'application/json' },
@@ -314,7 +314,7 @@ describeComponent('component/data-investments', function () {
 
       yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
         '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
-        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'MNT\'';
+        '&q=SELECT+*+FROM+yahoo.finance.keystats+WHERE+symbol%3D\'MNT\'';
 
       server.respondWith('GET', yqlQueryUrl,
                               [200, { 'Content-Type': 'application/json' },
@@ -372,7 +372,7 @@ describeComponent('component/data-investments', function () {
 
       yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
         '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
-        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'MNT\'';
+        '&q=SELECT+*+FROM+yahoo.finance.keystats+WHERE+symbol%3D\'MNT\'';
 
       server.respondWith('GET', yqlQueryUrl,
                               [200, { 'Content-Type': 'application/json' },

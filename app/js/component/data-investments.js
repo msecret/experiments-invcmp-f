@@ -25,7 +25,7 @@ define(function (require) {
       urlGet: config.API_PREFIX + '/investment/',
       urlUpdate: config.API_PREFIX + '/investment/',
       urlDelete: config.API_PREFIX + '/investment/',
-      yqlTable: 'yahoo.finance.keyststats'
+      yqlTable: 'yahoo.finance.keystats'
     });
 
     this.after('initialize', function () {
@@ -57,8 +57,13 @@ define(function (require) {
       yqlRequest = this.queryWithSymbol(data.investment.symbol);
 
       yqlRequest.done(function(yqlData) {
-        var pooData = $.extend(investmentRequest.investment, yqlData.results.stock);
-        investmentRequest.investment = pooData;
+        if (!yqlData.results) {
+          self.trigger('data-invalid_investement');
+          return;
+        }
+        var mixedData = $.extend(investmentRequest.investment,
+          yqlData.results.stock);
+        investmentRequest.investment = mixedData;
         self.createInvestment(investmentRequest, {
           success: function(data) {
             self.trigger('data-added_investment', data);
@@ -254,7 +259,7 @@ define(function (require) {
       // SELECT * FROM yahoo.finance.keystats WHERE symbol='T'
 
       queryStatement = 'SELECT * '+
-        'FROM '+ this.attr.yqlTable +
+        'FROM '+ this.attr.yqlTable + ' ' +
         'WHERE symbol=\''+ symbol + '\'';
 
       return this.queryYql(queryStatement);

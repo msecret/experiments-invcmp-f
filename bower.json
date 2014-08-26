@@ -10,7 +10,7 @@
     "flight-hogan": "~2.0.1",
     "flight-request": "~0.0.3",
     "pure": "~0.5.0",
-    "flight-yql": "~0.2.1"
+    "flight-yql": "~0.2.2"
   },
   "devDependencies": {
     "jasmine-flight": "~2.2.0",
