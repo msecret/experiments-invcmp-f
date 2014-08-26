@@ -8,12 +8,13 @@ define(function (require) {
 
   var defineComponent = require('flight/lib/component');
   var withRequest = require('flight-request/lib/with_request');
+  var withYql = require('flight-yql/lib/with_yql');
   var config = require('component/config');
 
   /**
    * Module exports
    */
-  return defineComponent(dataInvestments, withRequest);
+  return defineComponent(dataInvestments, withRequest, withYql);
 
   /**
    * Module function
@@ -23,7 +24,8 @@ define(function (require) {
       urlCreate: config.API_PREFIX + '/investments',
       urlGet: config.API_PREFIX + '/investment/',
       urlUpdate: config.API_PREFIX + '/investment/',
-      urlDelete: config.API_PREFIX + '/investment/'
+      urlDelete: config.API_PREFIX + '/investment/',
+      yqlTable: 'yahoo.finance.keyststats'
     });
 
     this.after('initialize', function () {
@@ -40,21 +42,34 @@ define(function (require) {
      * @param {Object} data The data payload to create investment with.
      */
     this.handleSearchedInvestment = function(ev, data) {
-      if (!data || !data.investment || 
+      if (!data || !data.investment ||
             (typeof data.investment.symbol !== 'string')) {
         this.trigger('data-invalid_investment');
         return;
       }
-      
-      var self = this;
 
-      this.createInvestment(data.investment, {
-        success: function(resp) {
-          self.trigger('data-added_investment', resp);
-        },
-        error: function(resp) {
-          self._handleError(resp);
-        }
+      var self = this,
+          investmentData = {},
+          investmentRequest = data,
+          yqlRequest,
+          createRequest;
+
+      yqlRequest = this.queryWithSymbol(data.investment.symbol);
+
+      yqlRequest.done(function(yqlData) {
+        var pooData = $.extend(investmentRequest.investment, yqlData.results.stock);
+        investmentRequest.investment = pooData;
+        self.createInvestment(investmentRequest, {
+          success: function(data) {
+            self.trigger('data-added_investment', data);
+          },
+          error: function(resp) {
+            self._handleError(resp);
+          }
+        });
+      }).fail(function(resp) {
+        self.trigger('data-invalid_investment')
+        return;
       });
     };
 
@@ -65,7 +80,7 @@ define(function (require) {
      * @param {Object} data The data payload with symbol to get.
      */
     this.handleGetInvestment = function(ev, data) {
-      if (!data || !data.investment || 
+      if (!data || !data.investment ||
             (typeof data.investment.symbol !== 'string')) {
         this.trigger('data-invalid_investment');
         return;
@@ -93,7 +108,7 @@ define(function (require) {
         this.trigger('data-invalid_investment');
         return;
       }
-      
+
       var self = this;
 
       this.updateInvestment(data.investment, {
@@ -139,6 +154,8 @@ define(function (require) {
      *    group
      *    !schema investmentRequest.json
      *  @param {Object} opts Hash containing just succes and error handlers.
+     *
+     *  @return {Object} jQuery Promise.
      */
     this.createInvestment = function(investment, opts) {
       var self = this,
@@ -148,13 +165,11 @@ define(function (require) {
         url: this.attr.urlCreate,
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(investment),
-        success: function(resp) {
-          var investment = self._setTimeStampOnInvestment(resp.data.investment);
-          opts.success && opts.success({investment: investment});
-        },
-        error: function(resp) {
-          opts.error && opts.error(resp);
-        }
+      }).done(function(resp) {
+        var investment = self._setTimeStampOnInvestment(resp.data.investment);
+        opts.success && opts.success({investment: investment});
+      }).fail(function(resp) {
+        opts.error && opts.error(resp);
       });
     };
 
@@ -189,7 +204,7 @@ define(function (require) {
 
     /**
      * Get an investment.
-     * 
+     *
      * @param {Object} data Investment data
      *   !schema investment request.
      */
@@ -234,6 +249,17 @@ define(function (require) {
       });
     };
 
+    this.queryWithSymbol = function(symbol) {
+      var queryStatement;
+      // SELECT * FROM yahoo.finance.keystats WHERE symbol='T'
+
+      queryStatement = 'SELECT * '+
+        'FROM '+ this.attr.yqlTable +
+        'WHERE symbol=\''+ symbol + '\'';
+
+      return this.queryYql(queryStatement);
+    };
+
     /**
      * Set the timestamp and formatted timestamp on each field in the
      * investment.
@@ -254,9 +280,9 @@ define(function (require) {
 
       formattedTimestamp =
         timestamp.getMonth() + '/' +
-        timestamp.getDate() + '/' + 
+        timestamp.getDate() + '/' +
         timestamp.getFullYear();
-      
+
       for (key in investment.fields) {
         if (investment.fields.hasOwnProperty(key)) {
           field = investment.fields[key];

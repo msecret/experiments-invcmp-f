@@ -2,14 +2,15 @@
 
 describeComponent('component/data-investments', function () {
   var testInvestmentRequest,
-      testInvestment;
+      testInvestment,
+      testYqlResponse;
 
   var API_PREFIX = '/api/v0';
 
   // Initialize the component and attach it to the DOM
   beforeEach(function () {
     setupComponent();
-    testInvestmentRequest = { 
+    testInvestmentRequest = {
       id: 1,
       symbol: 'TST',
       group: {name: 'TGroup'}
@@ -20,6 +21,12 @@ describeComponent('component/data-investments', function () {
       group: {name: 'TGroup'},
       fields: {
         symbol: {val: 'TST'}
+      }
+    };
+    testYqlResponse = {
+      results: {
+        symbol: 'TST',
+        Volume: '14881982'
       }
     };
   });
@@ -73,39 +80,96 @@ describeComponent('component/data-investments', function () {
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
-    it('should make a POST ajax call to /investments if symbol string', 
+    it('should make a request to get the data from yql', function() {
+      this.$node.trigger('ui-add_investment', {investment: {symbol: 'YHOO'}});
+    });
+    it('should trigger data-invalid_investment if symbol not found in yql',
        function() {
-      this.$node.trigger('ui-add_investment', {investment: 
+      var eventSpy,
+          yqlQueryUrl;
+
+      eventSpy = spyOnEvent(document, 'data-invalid_investment');
+
+      yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql?' +
+        'format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
+        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3DMNS'
+
+      server.respondWith('GET', yqlQueryUrl,
+                              [404, { 'Content-Type': 'application/json' },
+                              '{status: "Not found", code: 404}']);
+
+      this.$node.trigger('ui-add_investment', {investment: {symbol: 'MNS'}});
+
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+     });
+    it('should make a POST ajax call to /investments if symbol found',
+        function() {
+      var yqlQueryUrl;
+
+      yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
+        '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
+        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TST\'';
+
+      server.respondWith('GET', yqlQueryUrl,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testYqlResponse)]);
+
+      this.$node.trigger('ui-add_investment', {investment:
                                                testInvestmentRequest});
 
-      expect(server.requests[0].url).toEqual(API_PREFIX + '/investments');
-      expect(server.requests[0].method).toEqual('POST');
+      server.respond();
+
+      expect(server.requests[1].url).toEqual(API_PREFIX + '/investments');
+      expect(server.requests[1].method).toEqual('POST');
     });
     it('should trigger data-added_investment with investment data if the request'+
        ' succeeded', function() {
       var testInvestmentRequest,
+          testYqlResponse,
           expected,
+          yqlQueryUrl,
           eventSpy;
 
       testInvestmentRequest = {
         symbol: 'TNT',
         group: {name: 'TGroup1'}
       };
+      testYqlResponse = {
+        results: {
+          stock: {
+            symbol: 'TNT',
+            volume: 101241
+          }
+        }
+      };
       expected = {
         symbol: 'TNT',
         group: {name: 'TGroup1'},
         fields: {
-          symbol: {val: 'TNT'}
+          symbol: {val: 'TNT'},
+          volume: {val: 101242}
         }
 
       };
+
+      yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
+        '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
+        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TNT\'';
+
       eventSpy = spyOnEvent(document, 'data-added_investment');
+
+      server.respondWith('GET', yqlQueryUrl,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testYqlResponse)]);
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify({data: {investment: expected}})]);
 
-      this.$node.trigger('ui-add_investment', 
+      this.$node.trigger('ui-add_investment',
                         {investment: testInvestmentRequest});
+      server.respond();
       server.respond();
 
       expect(eventSpy.mostRecentCall.data.investment.symbol).toEqual(
@@ -114,10 +178,20 @@ describeComponent('component/data-investments', function () {
     it('should leave group null if no group is present in data', function() {
       var testInvestmentRequest,
           expected,
+          yqlQueryUrl,
+          testYqlResponse,
           eventSpy;
 
       testInvestmentRequest = {
         symbol: 'TNT'
+      };
+      testYqlResponse = {
+        results: {
+          stock: {
+            symbol: 'TNT',
+            volume: 101241
+          }
+        }
       };
       expected = {
         symbol: 'TNT',
@@ -127,12 +201,21 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-added_investment');
+
+      yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
+        '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
+        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TNT\'';
+
+      server.respondWith('GET', yqlQueryUrl,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testYqlResponse)]);
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify({data: {investment: expected}})]);
 
-      this.$node.trigger('ui-add_investment', 
+      this.$node.trigger('ui-add_investment',
                         {investment: testInvestmentRequest});
+      server.respond();
       server.respond();
 
       expect(eventSpy.mostRecentCall.data.investment.symbol).toEqual(
@@ -152,28 +235,47 @@ describeComponent('component/data-investments', function () {
                               [404, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
-      this.$node.trigger('ui-add_investment', 
+      this.$node.trigger('ui-add_investment',
                          {investment: testInvestmentRequest});
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
-    it('should fire data-failed_request when server returns failure over 500', 
+    it('should fire data-failed_request when server returns failure over 500',
        function() {
       var eventSpy,
+          yqlQueryUrl,
+          testYqlResponse,
           expected;
 
       expected = {
         statusCode: 500,
         message: 'not found'
       };
+      testYqlResponse = {
+        results: {
+          stock: {
+            symbol: 'TST',
+            volume: 101241
+          }
+        }
+      };
       eventSpy = spyOnEvent(document, 'data-failed_request');
+
+      yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
+        '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
+        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'TST\'';
+
+      server.respondWith('GET', yqlQueryUrl,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testYqlResponse)]);
       server.respondWith('POST', API_PREFIX + '/investments',
                               [500, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
-      this.$node.trigger('ui-add_investment', 
+      this.$node.trigger('ui-add_investment',
                          {investment: testInvestmentRequest});
+      server.respond();
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
@@ -181,12 +283,22 @@ describeComponent('component/data-investments', function () {
     it('should update the updatedAt timestamp on on fields', function() {
       var testInvestmentRequest,
           testInvestment,
+          yqlQueryUrl,
+          testYqlResponse,
           expected,
           eventSpy,
           actual;
 
       testInvestmentRequest = {
         symbol: 'MNT'
+      };
+      testYqlResponse = {
+        results: {
+          stock: {
+            symbol: 'MNT',
+            volume: 101241
+          }
+        }
       };
       clock.tick(50);
       expected = new Date();
@@ -199,22 +311,33 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-added_investment');
+
+      yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
+        '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
+        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'MNT\'';
+
+      server.respondWith('GET', yqlQueryUrl,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testYqlResponse)]);
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(
                                  {data: {investment: testInvestment}})]);
 
-      this.$node.trigger('ui-add_investment', 
+      this.$node.trigger('ui-add_investment',
                         {investment: testInvestmentRequest});
+      server.respond();
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      actual = eventSpy.mostRecentCall.data.investment; 
+      actual = eventSpy.mostRecentCall.data.investment;
       expect(actual.fields.cap.updatedAt).toEqual(expected);
     });
     it('should update the updatedAtFormatted timestamp on on fields', function() {
       var testInvestmentRequest,
           testInvestment,
+          yqlQueryUrl,
+          testYqlResponse,
           expected,
           eventSpy,
           newDate,
@@ -223,11 +346,19 @@ describeComponent('component/data-investments', function () {
       testInvestmentRequest = {
         symbol: 'MNT'
       };
+      testYqlResponse = {
+        results: {
+          stock: {
+            symbol: 'MNT',
+            volume: 101241
+          }
+        }
+      };
       clock.tick(50);
       newDate = new Date();
       expected =
         newDate.getMonth() + '/' +
-        newDate.getDate() + '/' + 
+        newDate.getDate() + '/' +
         newDate.getFullYear();
       testInvestment = {
         symbol: 'MNT',
@@ -238,17 +369,26 @@ describeComponent('component/data-investments', function () {
       };
 
       eventSpy = spyOnEvent(document, 'data-added_investment');
+
+      yqlQueryUrl = 'https://query.yahooapis.com/v1/public/yql' +
+        '?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys' +
+        '&q=SELECT+*+FROM+yahoo.finance.keyststatsWHERE+symbol%3D\'MNT\'';
+
+      server.respondWith('GET', yqlQueryUrl,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testYqlResponse)]);
       server.respondWith('POST', API_PREFIX + '/investments',
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify(
                                       {data: {investment: testInvestment}})]);
 
-      this.$node.trigger('ui-add_investment', 
+      this.$node.trigger('ui-add_investment',
                         {investment: testInvestmentRequest});
+      server.respond();
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      actual = eventSpy.mostRecentCall.data.investment; 
+      actual = eventSpy.mostRecentCall.data.investment;
 
       expect(actual.fields.cap.updatedAtFormatted).toEqual(expected);
     });
@@ -308,7 +448,7 @@ describeComponent('component/data-investments', function () {
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify({investment: expected})]);
 
-      this.$node.trigger('ui-get_investment', 
+      this.$node.trigger('ui-get_investment',
                         {investment: testInvestmentRequest});
       server.respond();
 
@@ -332,7 +472,7 @@ describeComponent('component/data-investments', function () {
       clock.restore();
     });
 
-    it('should not trigger an event if missing data', 
+    it('should not trigger an event if missing data',
        function() {
       var eventSpy;
 
@@ -349,9 +489,9 @@ describeComponent('component/data-investments', function () {
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
-    it('should make a PUT ajax call to /investment/{id} if symbol string', 
+    it('should make a PUT ajax call to /investment/{id} if symbol string',
        function() {
-      this.$node.trigger('ui-update_investment', {investment: 
+      this.$node.trigger('ui-update_investment', {investment:
                                                    testInvestment});
 
       expect(server.requests[0].url).toEqual(
@@ -377,7 +517,7 @@ describeComponent('component/data-investments', function () {
                               [200, { 'Content-Type': 'application/json' },
                                JSON.stringify({data: {investment: expected}})]);
 
-      this.$node.trigger('ui-update_investment', 
+      this.$node.trigger('ui-update_investment',
                         {investment: expected});
       server.respond();
 
@@ -407,12 +547,12 @@ describeComponent('component/data-investments', function () {
                                JSON.stringify(
                                  {data: {investment: testInvestment}})]);
 
-      this.$node.trigger('ui-update_investment', 
+      this.$node.trigger('ui-update_investment',
                         {investment: testInvestment});
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      actual = eventSpy.mostRecentCall.data.investment; 
+      actual = eventSpy.mostRecentCall.data.investment;
       expect(actual.fields.cap.updatedAt).toEqual(expected);
     });
     it('should update the updatedAtFormatted timestamp on on fields', function() {
@@ -426,7 +566,7 @@ describeComponent('component/data-investments', function () {
       newDate = new Date();
       expected =
         newDate.getMonth() + '/' +
-        newDate.getDate() + '/' + 
+        newDate.getDate() + '/' +
         newDate.getFullYear();
       testInvestment = {
         id: 3,
@@ -443,12 +583,12 @@ describeComponent('component/data-investments', function () {
                                JSON.stringify(
                                  {data: {investment: testInvestment}})]);
 
-      this.$node.trigger('ui-update_investment', 
+      this.$node.trigger('ui-update_investment',
                         {investment: testInvestment});
       server.respond();
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
-      actual = eventSpy.mostRecentCall.data.investment; 
+      actual = eventSpy.mostRecentCall.data.investment;
 
       expect(actual.fields.cap.updatedAtFormatted).toEqual(expected);
     });
@@ -468,7 +608,7 @@ describeComponent('component/data-investments', function () {
     it('should request a DELETE on /investment/{id}', function() {
       var expected = {symbol: 'SYN'};
 
-      this.$node.trigger('ui-delete_investment', 
+      this.$node.trigger('ui-delete_investment',
                          {investment: testInvestmentRequest});
 
       expect(server.requests[0]).toBeDefined();
@@ -481,7 +621,7 @@ describeComponent('component/data-investments', function () {
         var eventSpy,
             expected;
 
-      expected = { 
+      expected = {
         id: 2,
         symbol: 'TMT',
         group: {name: 'TGroup3'}
@@ -497,7 +637,7 @@ describeComponent('component/data-investments', function () {
 
       expect(eventSpy.mostRecentCall.data).toEqual({investment: expected});
     });
-    it('should trigger a data-invalid_investment if the id is missing', 
+    it('should trigger a data-invalid_investment if the id is missing',
        function() {
       var testInvestment = {symbol: 'NDS', group: 'Groupa'},
           eventSpy;
@@ -508,7 +648,7 @@ describeComponent('component/data-investments', function () {
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
-    it('should trigger a data-invalid_investment if the symbol is not a string', 
+    it('should trigger a data-invalid_investment if the symbol is not a string',
        function() {
       var testInvestment = {group: 'Groupa', symbol: 1},
           eventSpy;
@@ -519,7 +659,7 @@ describeComponent('component/data-investments', function () {
 
       expect(eventSpy).toHaveBeenTriggeredOn(document);
     });
-    it('should trigger a data-invalid_investment reason:not found if the server'+ 
+    it('should trigger a data-invalid_investment reason:not found if the server'+
        'returns 404', function() {
       var eventSpy,
           expected;
@@ -536,7 +676,7 @@ describeComponent('component/data-investments', function () {
                               [404, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
-      this.$node.trigger('ui-delete_investment', 
+      this.$node.trigger('ui-delete_investment',
                          {investment: testInvestmentRequest});
       server.respond();
 
@@ -561,7 +701,7 @@ describeComponent('component/data-investments', function () {
                               [500, { 'Content-Type': 'application/json' },
                                JSON.stringify(expected)]);
 
-      this.$node.trigger('ui-delete_investment', 
+      this.$node.trigger('ui-delete_investment',
                          {investment: testInvestmentRequest});
       server.respond();
 

@@ -37,6 +37,7 @@ module.exports = function (config) {
       {pattern: 'app/bower_components/flight/lib/*.js', included: false},
       {pattern: 'app/bower_components/flight-hogan/lib/*.js', included: false},
       {pattern: 'app/bower_components/flight-request/lib/*.js', included: false},
+      {pattern: 'app/bower_components/flight-yql/lib/*.js', included: false},
       {pattern: 'app/bower_components/requirejs-text/text.js', included: false },
       {pattern: 'app/js/**/*.js', included: false},
 			{pattern: 'app/**/*.html', included: false, served: true},
