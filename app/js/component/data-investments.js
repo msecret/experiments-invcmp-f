@@ -57,12 +57,15 @@ define(function (require) {
       yqlRequest = this.queryWithSymbol(data.investment.symbol);
 
       yqlRequest.done(function(yqlData) {
+        var dataMixer = {fields: null};
+        yqlData = yqlData.query;
         if (!yqlData.results) {
-          self.trigger('data-invalid_investement');
+          self.trigger('data-failed_request');
           return;
         }
+        dataMixer.fields = yqlData.results.stats;
         var mixedData = $.extend(investmentRequest.investment,
-          yqlData.results.stock);
+          dataMixer);
         investmentRequest.investment = mixedData;
         self.createInvestment(investmentRequest, {
           success: function(data) {

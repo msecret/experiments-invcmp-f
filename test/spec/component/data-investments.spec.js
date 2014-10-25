@@ -24,9 +24,11 @@ describeComponent('component/data-investments', function () {
       }
     };
     testYqlResponse = {
-      results: {
-        symbol: 'TST',
-        Volume: '14881982'
+      query: {
+        results: {
+          symbol: 'TST',
+          Volume: '14881982'
+        }
       }
     };
   });
@@ -137,10 +139,12 @@ describeComponent('component/data-investments', function () {
         group: {name: 'TGroup1'}
       };
       testYqlResponse = {
-        results: {
-          stock: {
-            symbol: 'TNT',
-            volume: 101241
+        query: {
+          results: {
+            stock: {
+              symbol: 'TNT',
+              volume: 101241
+            }
           }
         }
       };
@@ -172,6 +176,8 @@ describeComponent('component/data-investments', function () {
       server.respond();
       server.respond();
 
+      console.log('pooooop');
+      console.log(eventSpy.mostRecentCall);
       expect(eventSpy.mostRecentCall.data.investment.symbol).toEqual(
         expected.symbol);
     });
@@ -186,10 +192,12 @@ describeComponent('component/data-investments', function () {
         symbol: 'TNT'
       };
       testYqlResponse = {
-        results: {
-          stock: {
-            symbol: 'TNT',
-            volume: 101241
+        query: {
+          results: {
+            stock: {
+              symbol: 'TNT',
+              volume: 101241
+            }
           }
         }
       };
@@ -253,10 +261,12 @@ describeComponent('component/data-investments', function () {
         message: 'not found'
       };
       testYqlResponse = {
-        results: {
-          stock: {
-            symbol: 'TST',
-            volume: 101241
+        query: {
+          results: {
+            stock: {
+              symbol: 'TST',
+              volume: 101241
+            }
           }
         }
       };
@@ -293,10 +303,12 @@ describeComponent('component/data-investments', function () {
         symbol: 'MNT'
       };
       testYqlResponse = {
-        results: {
-          stock: {
-            symbol: 'MNT',
-            volume: 101241
+        query: {
+          results: {
+            stock: {
+              symbol: 'MNT',
+              volume: 101241
+            }
           }
         }
       };
@@ -347,10 +359,12 @@ describeComponent('component/data-investments', function () {
         symbol: 'MNT'
       };
       testYqlResponse = {
-        results: {
-          stock: {
-            symbol: 'MNT',
-            volume: 101241
+        query: {
+          results: {
+            stock: {
+              symbol: 'MNT',
+              volume: 101241
+            }
           }
         }
       };

@@ -68,7 +68,7 @@ define(function (require) {
     };
 
     /**
-     * Handle data added group events. 
+     * Handle data added group events.
      */
     this.handleAddedGroup = function(ev, data) {
       this.addGroup(data.group);
@@ -85,7 +85,7 @@ define(function (require) {
         investment = data.investment;
 
         if (investment.group) {
-          this.addInvestmentToGroup(investment, 
+          this.addInvestmentToGroup(investment,
                                 investment.group);
         }
         else {
