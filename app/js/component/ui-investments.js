@@ -27,8 +27,8 @@ define(function (require) {
       selectorList: '.js-investmentList_Body',
       selectorEntry: '.js-investmentList_Entry',
       selectorEntryField: '.js-investmentList_Entry_Field',
-      selectorEntryDelete: '.js-investmentListEntryControls-Delete', 
-      selectorEntryUpdate: '.js-investmentListEntryControls-Update', 
+      selectorEntryDelete: '.js-investmentListEntryControls-Delete',
+      selectorEntryUpdate: '.js-investmentListEntryControls-Update',
       numCols: 18,
       tmpltextGroupTr: tmpltextGroupTr,
       tmpltextInvestmentTr: tmpltextSymbolTr
@@ -37,6 +37,7 @@ define(function (require) {
     this.after('initialize', function () {
       var self = this;
 
+      this.on(document, 'data-init_investments', this.handleInitInvestments);
       this.on(document, 'data-added_group', this.handleAddedGroup);
       this.on(document, 'data-added_investment', this.handleAddedInvestment);
       this.on(document, 'data-updated_investments', this.handleUpdatedInvestments);
@@ -96,6 +97,15 @@ define(function (require) {
       }
     };
 
+    /*
+     * Handles the call to initialized all the investments from server.
+     */
+    this.handleInitInvestments = function(ev, data) {
+      if (data.investments) {
+        this.renderInvestments(data.investments);
+      }
+    };
+
     /**
      * Handle the delete button for an entry being clicked
      *
@@ -107,7 +117,7 @@ define(function (require) {
       var $target = $(ev.target).parents(this.attr.selectorEntry),
           id = $target.data('id'),
           symbol = $target.data('symbol');
-      this.trigger('ui-delete_investment', {investment: 
+      this.trigger('ui-delete_investment', {investment:
                           { id: id,
                             symbol: symbol}});
     };
@@ -123,7 +133,7 @@ define(function (require) {
       var $target = $(ev.target).parents(this.attr.selectorEntry),
           id = $target.data('id'),
           symbol = $target.data('symbol');
-      this.trigger('ui-update_investment', {investment: 
+      this.trigger('ui-update_investment', {investment:
                           { id: id,
                             symbol: symbol}});
     };
@@ -221,7 +231,7 @@ define(function (require) {
 
       $groupSelector.after(html);
     };
-    
+
     /**
      * Add the investment under no group.
      *
@@ -249,6 +259,27 @@ define(function (require) {
       html = this.renderTemplate(this.attr.tmpltextInvestmentTr, investment);
 
       return html;
+    };
+
+    this.renderInvestments = function(investments) {
+      var addedGroups = [],
+          i, ilen,
+          investment,
+          html;
+
+      for (i = 0, ilen = investments.length; i < ilen; i++) {
+        investment = investments[i];
+
+        if (!investment.group) {
+          this.addInvestmentNoGroup(investment);
+        } else {
+          if ($.inArray(investment.group.name, addedGroups) === -1) {
+            this.addGroup(investment.group);
+            addedGroups.push(investment.group.name);
+          }
+          this.addInvestmentToGroup(investment, investment.group);
+        }
+      }
     };
 
     /**
@@ -287,7 +318,7 @@ define(function (require) {
 
       $investment.replaceWith(html);
     };
-    
+
     /**
      * Update multiple investments data in the DOM.
      *
@@ -336,7 +367,7 @@ define(function (require) {
 
       $groupToDelete = this.findGroup(group.name);
       // This is kinda cool but is there a way to select this?
-      for ($row = $groupToDelete.next('tr'); 
+      for ($row = $groupToDelete.next('tr');
            $row.length && $row.hasClass(this.attr.selectorEntry);
            $row = $row.next('tr')) {
         $row.detach();

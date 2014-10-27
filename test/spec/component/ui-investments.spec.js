@@ -48,6 +48,51 @@ describeComponent('component/ui-investments', function () {
     expect(this.component).toBeDefined();
   });
 
+  describe('on data-init_investments', function() {
+    it('should add the investments passed to the list', function() {
+      var actual;
+
+      actual = this.component.select('selectorList').find('tr').first();
+      testInvestment.group = null;
+
+      expect(actual.length).toEqual(0);
+
+      $(document).trigger('data-init_investments',
+                          {investments: [testInvestment]});
+
+      actual = this.component.select('selectorList').find('tr').first();
+      expect(actual.length).toEqual(1);
+    });
+    it('should add a group if there is one for the investment', function() {
+      var actual;
+
+      testInvestment.group = {'name': 'Tester3'};
+      actual = this.component.findGroup(testInvestment.group.name);
+
+      expect(actual.length).toEqual(0);
+
+      $(document).trigger('data-init_investments',
+                          {investments: [testInvestment]});
+
+      actual = this.component.findGroup(testInvestment.group.name);
+      expect(actual.length).toEqual(1);
+    });
+    it('should not add the same group twice', function() {
+      var actual;
+
+      testInvestment.group = {'name': 'Tester3'};
+      actual = this.component.findGroup(testInvestment.group.name);
+
+      expect(actual.length).toEqual(0);
+
+      $(document).trigger('data-init_investments',
+                          {investments: [testInvestment, testInvestment]});
+
+      actual = this.component.findGroup(testInvestment.group.name);
+      expect(actual.length).toEqual(1);
+    });
+  });
+
   describe('on data-added_investment', function() {
     it('should trigger a ui-added_investment event', function() {
       var expected,
@@ -55,13 +100,13 @@ describeComponent('component/ui-investments', function () {
 
       eventSpy = spyOnEvent(document, 'ui-added_investment');
 
-      $(document).trigger('data-added_investment', 
+      $(document).trigger('data-added_investment',
                           {investment: testInvestment});
 
       expect(eventSpy.mostRecentCall.data).toEqual(testInvestment);
     });
-    it('should not trigger a ui-added_investment event if theres no symbol in data', 
-       function() {
+    it('should not trigger a ui-added_investment event if theres no symbol ' +
+      'in data', function() {
       var expected,
           eventSpy;
 
@@ -200,7 +245,7 @@ describeComponent('component/ui-investments', function () {
           template = Hogan.compile(this.component.attr.tmpltextGroupTr),
           expected,
           actual;
-      
+
       testGroup = {name: 'testGroupA'};
       expected = $.trim(template.render($.extend(testGroup, {numCols: 18})));
 
@@ -218,7 +263,7 @@ describeComponent('component/ui-investments', function () {
           expected,
           actualLen,
           actual;
-      
+
       testGroup = {name: 'testGroupA'};
       expected = $.trim(template.render($.extend(testGroup, {numCols: 18})));
 
@@ -502,7 +547,7 @@ describeComponent('component/ui-investments', function () {
       var expected,
           expectedSymbolSelector,
           actual;
-          
+
       testInvestment = {
         symbol: 'SYT',
         fields: {
@@ -514,7 +559,7 @@ describeComponent('component/ui-investments', function () {
       actual = this.component.findInvestment(expected.symbol);
 
       expect(actual.length).toEqual(1);
-      
+
       $(document).trigger('data-deleted_investment', {investment: expected});
 
       actual = this.component.findInvestment(expected.symbol);
@@ -525,7 +570,7 @@ describeComponent('component/ui-investments', function () {
           expectedSymbolSelector,
           testGroup,
           actual;
-          
+
       testGroup = {
         name: 'testG1'
       };
@@ -543,7 +588,7 @@ describeComponent('component/ui-investments', function () {
       actual = this.component.findInvestment(expected.symbol);
 
       expect(actual.length).toEqual(1);
-      
+
       $(document).trigger('data-deleted_investment', {investment: expected});
 
       actual = this.component.findInvestment(expected.symbol);
@@ -621,7 +666,7 @@ describeComponent('component/ui-investments', function () {
       expectedInvestment.group = expectedGroup;
 
       this.component.addGroup(expectedGroup);
-      this.component.addInvestmentToGroup(expectedInvestment, 
+      this.component.addInvestmentToGroup(expectedInvestment,
                                           expectedGroup);
 
       actual = this.component.findGroup(expectedGroup.name);
