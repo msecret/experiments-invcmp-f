@@ -23,6 +23,7 @@ define(function (require) {
     this.defaultAttrs({
       urlCreate: config.API_PREFIX + '/investments',
       urlGet: config.API_PREFIX + '/investment/',
+      urlGetMultiple: config.API_PREFIX + '/investments',
       urlUpdate: config.API_PREFIX + '/investment/',
       urlDelete: config.API_PREFIX + '/investment/',
       yqlTable: 'yahoo.finance.keystats'
@@ -33,6 +34,8 @@ define(function (require) {
       this.on('ui-get_investment', this.handleGetInvestment);
       this.on('ui-update_investment', this.handleUpdateInvestment);
       this.on('ui-delete_investment', this.handleDeleteInvestment);
+
+      this.initializeInvestments();
     });
 
     /**
@@ -149,6 +152,23 @@ define(function (require) {
         error: function(resp) {
           self._handleError(resp);
         }
+      });
+    };
+
+    /**
+     * Initializes investments by pulling them from the server and calling
+     * the event "data-init_investments".
+     */
+    this.initializeInvestments = function() {
+      var self = this;
+
+      this.get({
+        url: this.attr.urlGetMultiple,
+        contentType: 'application/json; charset=utf-8'
+      }).done(function(resp) {
+        self.trigger('data-init_investments', resp.data);
+      }).fail(function(resp) {
+        self._handleError(resp);
       });
     };
 

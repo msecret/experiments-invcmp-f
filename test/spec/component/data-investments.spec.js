@@ -37,6 +37,52 @@ describeComponent('component/data-investments', function () {
     expect(this.component).toBeDefined();
   });
 
+  describe('on initialize', function() {
+    var server,
+        testInvestmentsResp = {};
+
+    beforeEach(function() {
+      server = sinon.fakeServer.create();
+      testInvestmentsResp = {
+        data: {
+          investments: testInvestment
+        }
+      }
+    });
+
+    afterEach(function() {
+      server.restore();
+    });
+
+    it('should make a GET request to the server at the GetMultiple url',
+        function() {
+      server.respondWith('GET', this.component.attr.urlGetMultiple,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testInvestmentsResp)]);
+
+      setupComponent();
+      server.respond();
+
+      expect(server.requests[0].url).toEqual(API_PREFIX + '/investments');
+      expect(server.requests[0].method).toEqual('GET');
+    });
+    it('should trigger data-init_investments with data from server', function() {
+      var eventSpy;
+
+      server.respondWith('GET', this.component.attr.urlGetMultiple,
+                              [200, { 'Content-Type': 'application/json' },
+                              JSON.stringify(testInvestmentsResp)]);
+
+      eventSpy = spyOnEvent(document, 'data-init_investments');
+
+      setupComponent();
+      server.respond();
+
+      expect(eventSpy).toHaveBeenTriggeredOn(document);
+    });
+
+  });
+
   describe('on ui-add_investment', function() {
     var server,
         clock;
@@ -176,8 +222,6 @@ describeComponent('component/data-investments', function () {
       server.respond();
       server.respond();
 
-      console.log('pooooop');
-      console.log(eventSpy.mostRecentCall);
       expect(eventSpy.mostRecentCall.data.investment.symbol).toEqual(
         expected.symbol);
     });
