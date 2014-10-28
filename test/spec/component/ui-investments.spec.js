@@ -10,12 +10,12 @@ describeComponent('component/ui-investments', function () {
       '<thead class="js-investmentList_Header">'+
         '<th class="js-investment_Control"></th>'+
         '<th data-name="symbol" name="symbol">Sym</th>'+
-        '<th name="cap">Cap</th>'+
+        '<th name="MarketCap">cap</th>'+
         '<th name="price">Price</th>'+
         '<th name="priceChangeYTD">Price change ytd</th>'+
         '<th name="trackingError">Tracking error</th>'+
-        '<th name="assets">Assets</th>'+
-        '<th name="volume">Volume</th>'+
+        '<th name="TotalCash">assets</th>'+
+        '<th name="AvgVol">volume</th>'+
         '<th name="bidAsk">Bid-ask</th>'+
         '<th name="msRisk">MS risk</th>'+
         '<th name="stdDev">Std dev</th>'+
@@ -316,7 +316,7 @@ describeComponent('component/ui-investments', function () {
       var expected,
           eventSpy,
           testInvestment,
-          field = 'cap',
+          field = 'MarketCap',
           entryFieldSelector;
 
       testInvestment = {
@@ -405,8 +405,8 @@ describeComponent('component/ui-investments', function () {
         symbol: 'SYR',
         fields: {
           symbol: {val: 'SYR'},
-          cap: {val: 11},
-          assets: {val: 101}
+          MarketCap: {content: 11},
+          TotalCash: {content: 101}
         }
       };
       expectedCap = 12;
@@ -415,15 +415,15 @@ describeComponent('component/ui-investments', function () {
         symbol: 'SYR',
         fields: {
           symbol: {val: 'SYR'},
-          cap: {val: expectedCap},
-          assets: {val: expectedAssets}
+          MarketCap: {content: expectedCap},
+          TotalCash: {content: expectedAssets}
         }
       }];
       this.component.addInvestmentNoGroup(testInvestment);
       $testInvestment = this.component.findInvestment(testInvestment.symbol);
 
-      actualCap = $testInvestment.find('td[name="cap"]').data('val');
-      actualAssets = $testInvestment.find('td[name="assets"]').data('val');
+      actualCap = $testInvestment.find('td[name="MarketCap"]').data('val');
+      actualAssets = $testInvestment.find('td[name="TotalCash"]').data('val');
       expect(actualCap).toEqual(11);
       expect(actualAssets).toEqual(101);
 
@@ -431,8 +431,8 @@ describeComponent('component/ui-investments', function () {
                           expected});
 
       $testInvestment = this.component.findInvestment(testInvestment.symbol);
-      actualCap = $testInvestment.find('td[name="cap"]').data('val');
-      actualAssets = $testInvestment.find('td[name="assets"]').data('val');
+      actualCap = $testInvestment.find('td[name="MarketCap"]').data('val');
+      actualAssets = $testInvestment.find('td[name="TotalCash"]').data('val');
 
       expect(actualCap).toEqual(expectedCap);
       expect(actualAssets).toEqual(expectedAssets);
@@ -454,24 +454,24 @@ describeComponent('component/ui-investments', function () {
         symbol: 'TNA',
         fields: {
           symbol: {val: 'TNA'},
-          cap: {val: 11}
+          MarketCap: {content: 11}
         }
       };
       testInvestmentB = {
         symbol: 'TNB',
         fields: {
           symbol: {val: 'TNB'},
-          cap: {val: 21},
-          assets: {val: 201}
+          MarketCap: {content: 21},
+          TotalCash: {content: 201}
         }
       };
       this.component.addInvestmentNoGroup(testInvestmentA);
       this.component.addInvestmentNoGroup(testInvestmentB);
       $testInvestmentA = this.component.findInvestment(testInvestmentA.symbol);
       $testInvestmentB = this.component.findInvestment(testInvestmentB.symbol);
-      aCap = $testInvestmentA.children('td[name="cap"]').data('val');
-      bCap = $testInvestmentB.find('td[name="cap"]').data('val');
-      bAssets = $testInvestmentB.find('td[name="assets"]').data('val');
+      aCap = $testInvestmentA.children('td[name="MarketCap"]').data('val');
+      bCap = $testInvestmentB.find('td[name="MarketCap"]').data('val');
+      bAssets = $testInvestmentB.find('td[name="TotalCash"]').data('val');
 
       expect(aCap).toEqual(11);
       expect(bCap).toEqual(21);
@@ -484,13 +484,14 @@ describeComponent('component/ui-investments', function () {
         { symbol: 'TNA',
           fields: {
             symbol: {val: 'TNA'},
-            cap: {val: expectedACap}},
+            MarketCap: {content: expectedACap}
+          }
         },
         { symbol: 'TNB',
           fields: {
             symbol: {val: 'TNB'},
-            cap: {val: expectedBCap},
-            assets: {val: expectedBAssets}
+            MarketCap: {content: expectedBCap},
+            TotalCash: {content: expectedBAssets}
           }
         }
       ];
@@ -500,9 +501,9 @@ describeComponent('component/ui-investments', function () {
 
       $testInvestmentA = this.component.findInvestment(testInvestmentA.symbol);
       $testInvestmentB = this.component.findInvestment(testInvestmentB.symbol);
-      aCap = $testInvestmentA.children('td[name="cap"]').data('val');
-      bCap = $testInvestmentB.find('td[name="cap"]').data('val');
-      bAssets = $testInvestmentB.find('td[name="assets"]').data('val');
+      aCap = $testInvestmentA.children('td[name="MarketCap"]').data('val');
+      bCap = $testInvestmentB.find('td[name="MarketCap"]').data('val');
+      bAssets = $testInvestmentB.find('td[name="TotalCash"]').data('val');
 
       expect(aCap).toEqual(expectedACap);
       expect(bCap).toEqual(expectedBCap);
@@ -523,8 +524,8 @@ describeComponent('component/ui-investments', function () {
         symbol: 'SYR',
         fields: {
           symbol: {val: 'SYR'},
-          cap: {val: expectedCap},
-          assets: {val: expectedAssets}
+          MarketCap: {content: expectedCap},
+          TotalCash: {content: expectedAssets}
         }
       };
       this.component.addInvestmentNoGroup(expected);
@@ -534,8 +535,8 @@ describeComponent('component/ui-investments', function () {
 
       $testInvestment = this.component.findInvestment(expected.symbol);
 
-      actualCap = $testInvestment.find('td[name="cap"]').data('val');
-      actualAssets = $testInvestment.find('td[name="assets"]').data('val');
+      actualCap = $testInvestment.find('td[name="MarketCap"]').data('val');
+      actualAssets = $testInvestment.find('td[name="TotalCash"]').data('val');
 
       expect(expectedCap).toEqual(actualCap);
       expect(expectedAssets).toEqual(actualAssets);

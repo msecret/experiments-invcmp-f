@@ -66,7 +66,7 @@ define(function (require) {
           self.trigger('data-failed_request');
           return;
         }
-        dataMixer.fields = yqlData.results.stats;
+        dataMixer.fields = self.correctYqlData(yqlData.results.stats);
         var mixedData = $.extend(investmentRequest.investment,
           dataMixer);
         investmentRequest.investment = mixedData;
@@ -332,6 +332,26 @@ define(function (require) {
       else {
         this.trigger('data-failed_request', resp);
       }
+    };
+
+    this.correctYqlData = function(yqlData) {
+      var field,
+          value,
+          toReturn = {};
+
+      for (field in yqlData) {
+        if (yqlData.hasOwnProperty(field)) {
+          value = yqlData[field];
+          // TODO check for null
+          if (typeof value !== 'object') {
+            toReturn[field] = {content: value};
+          }
+          else {
+            toReturn[field] = value;
+          }
+        }
+      }
+      return toReturn;
     };
   }
 
